@@ -1,0 +1,33 @@
+server:
+  servlet:
+    context-path: /home
+  port: 8080
+   
+spring:
+  application:
+    name: ssadang
+  datasource:
+    url: jdbc:mysql://localhost:3306/ssadang?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: ssafy
+    password: ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: org.apache.commons.dbcp2.BasicDataSource
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+      connection-init-sql: SELECT 1
+      validation-timeout: 2000
+      minimum-idle: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      auto-commit: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mybatis:
+    type-aliases-package: com.ssafy.*.model
+    mapper-locations: classpath:mapper/*.xml
