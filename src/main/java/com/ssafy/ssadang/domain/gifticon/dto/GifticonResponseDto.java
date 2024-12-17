@@ -12,7 +12,7 @@ import lombok.Getter;
 public class GifticonResponseDto {
 	
 	private Integer gifticonId;
-//	private User owner;
+	private Integer ownerId;
 	private String imagePath;
 	private LocalDate expiryDate;
 	private String name;
@@ -21,6 +21,7 @@ public class GifticonResponseDto {
 	public static GifticonResponseDto fromEntity(Gifticon gifticon) {
 		GifticonResponseDto gifticonDto = GifticonResponseDto.builder()
 				.gifticonId(gifticon.getGifticonId())
+				.ownerId(gifticon.getOwner().getUserId())
 				.imagePath(gifticon.getImagePath())
 				.expiryDate(gifticon.getExpiryDate())
 				.name(gifticon.getName())
