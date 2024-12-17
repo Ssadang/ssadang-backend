@@ -6,7 +6,6 @@ import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
 import com.ssafy.ssadang.domain.gifticon.entity.Gifticon;
 import com.ssafy.ssadang.domain.gifticon.repository.GifticonRepository;
-import com.ssafy.ssadang.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,15 +13,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GifticonServiceImpl implements GifticonService {
 
-	private final UserService userService;
-	
 	private final GifticonRepository gifticonRepository;
 	
 	@Override
 	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
-		// TODO imagePath 설정
+		// TODO owner, imagePath 설정
 		Gifticon gifticon = Gifticon.builder()
-				.owner(userService.findById(gifticonRequestDto.getOwnerId()))
+				.owner(null)
 				.imagePath(null)
 				.expiryDate(gifticonRequestDto.getExpiryDate())
 				.name(gifticonRequestDto.getName())
