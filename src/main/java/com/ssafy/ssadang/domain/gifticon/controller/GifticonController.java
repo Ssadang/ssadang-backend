@@ -1,5 +1,6 @@
 package com.ssafy.ssadang.domain.gifticon.controller;
 
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class GifticonController {
 	private final GifticonService gifticonService;
 	
 	@PostMapping
-	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
+	public GifticonResponseDto save(@ModelAttribute GifticonRequestDto gifticonRequestDto) {
 		return gifticonService.save(gifticonRequestDto);
 	}
 
