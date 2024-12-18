@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.user.controller;
+package com.ssafy.ssadang.domain.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ssadang.user.dto.SignupRequestDto;
-import com.ssafy.ssadang.user.service.UserService;
+import com.ssafy.ssadang.domain.user.dto.SignupRequestDto;
+import com.ssafy.ssadang.domain.user.service.UserService;
 
 @RestController
 @RequestMapping("/user")

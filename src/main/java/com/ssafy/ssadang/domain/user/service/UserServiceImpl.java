@@ -1,14 +1,14 @@
-package com.ssafy.ssadang.user.service;
+package com.ssafy.ssadang.domain.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ssadang.user.dto.SignupRequestDto;
-import com.ssafy.ssadang.user.entity.RoleRegister;
-import com.ssafy.ssadang.user.entity.User;
-import com.ssafy.ssadang.user.repository.RoleRegisterRepository;
-import com.ssafy.ssadang.user.repository.UserRepository;
+import com.ssafy.ssadang.domain.user.dto.SignupRequestDto;
+import com.ssafy.ssadang.domain.user.entity.RoleRegister;
+import com.ssafy.ssadang.domain.user.entity.User;
+import com.ssafy.ssadang.domain.user.repository.RoleRegisterRepository;
+import com.ssafy.ssadang.domain.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 

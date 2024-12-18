@@ -1,8 +1,8 @@
-package com.ssafy.ssadang.user.dto;
+package com.ssafy.ssadang.domain.user.dto;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.ssafy.ssadang.user.entity.User;
+import com.ssafy.ssadang.domain.user.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

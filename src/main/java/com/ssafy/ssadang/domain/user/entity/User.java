@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.user.entity;
+package com.ssafy.ssadang.domain.user.entity;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	private Integer userId;
 	private String email;
 	private String password;
 	private String name;

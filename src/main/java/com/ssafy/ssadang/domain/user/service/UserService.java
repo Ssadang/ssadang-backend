@@ -1,8 +1,8 @@
-package com.ssafy.ssadang.user.service;
+package com.ssafy.ssadang.domain.user.service;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ssadang.user.dto.SignupRequestDto;
+import com.ssafy.ssadang.domain.user.dto.SignupRequestDto;
 
 public interface UserService {
 	public int signup(SignupRequestDto dto);

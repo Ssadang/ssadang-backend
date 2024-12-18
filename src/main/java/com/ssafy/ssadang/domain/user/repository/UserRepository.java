@@ -1,9 +1,9 @@
-package com.ssafy.ssadang.user.repository;
+package com.ssafy.ssadang.domain.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.ssadang.user.entity.User;
+import com.ssafy.ssadang.domain.user.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>{

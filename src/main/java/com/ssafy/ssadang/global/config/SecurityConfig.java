@@ -1,4 +1,4 @@
-package com.ssafy.global.config;
+package com.ssafy.ssadang.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.user.entity;
+package com.ssafy.ssadang.domain.user.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
