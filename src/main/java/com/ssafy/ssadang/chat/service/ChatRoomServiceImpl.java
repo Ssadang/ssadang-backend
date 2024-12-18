@@ -40,6 +40,13 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                 .createDate(savedChatRoom.getCreateDate())
                 .build();
     }
-
+    @Override
+    @Transactional
+    public void deleteChatRoom(Long chatRoomId) {
+        if (!chatRoomRepository.existsById(chatRoomId)) {
+            throw new RuntimeException("채팅방이 존재하지 않습니다.");
+        }
+        chatRoomRepository.deleteById(chatRoomId); // 삭제 수행
+    }
 
 }

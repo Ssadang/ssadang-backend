@@ -5,5 +5,5 @@ import com.ssafy.ssadang.chat.dto.ChatRoomResponseDto;
 
 public interface ChatRoomService {
     ChatRoomResponseDto createChatRoom(ChatRoomRequestDto requestDto);
-
+    void deleteChatRoom(Long chatRoomId);
 }

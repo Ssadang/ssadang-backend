@@ -6,10 +6,7 @@ import com.ssafy.ssadang.chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +18,12 @@ public class ChatRoomController {
     public ResponseEntity<ChatRoomResponseDto> createChatRoom(@RequestBody @Validated ChatRoomRequestDto requestDto) {
         ChatRoomResponseDto responseDto = chatRoomService.createChatRoom(requestDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping("/{chatRoomId}")
+    public ResponseEntity<String> deleteChatRoom(@PathVariable Long chatRoomId) {
+        chatRoomService.deleteChatRoom(chatRoomId);
+        return ResponseEntity.ok("채팅방이 삭제되었습니다.");
     }
 
 }
