@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.chat.dto;
+package com.ssafy.ssadang.domain.chat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class ChatRoomResponseDto {
-    private Long chatId;
+    private Integer chatId;
     private Integer sellerId;
     private Integer buyerId;
     private Integer chatType;

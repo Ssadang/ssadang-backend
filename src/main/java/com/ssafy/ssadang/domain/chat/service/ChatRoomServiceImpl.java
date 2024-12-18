@@ -1,14 +1,16 @@
-package com.ssafy.ssadang.chat.service;
+package com.ssafy.ssadang.domain.chat.service;
 
-import com.ssafy.ssadang.chat.dto.ChatRoomRequestDto;
-import com.ssafy.ssadang.chat.dto.ChatRoomResponseDto;
-import com.ssafy.ssadang.chat.entity.ChatRoom;
-import com.ssafy.ssadang.chat.repository.ChatRoomRepository;
-import jakarta.transaction.Transactional;
+import com.ssafy.ssadang.domain.chat.dto.ChatRoomRequestDto;
+import com.ssafy.ssadang.domain.chat.dto.ChatRoomResponseDto;
+import com.ssafy.ssadang.domain.chat.entity.ChatRoom;
+import com.ssafy.ssadang.domain.chat.repository.ChatRoomRepository;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +44,30 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     }
     @Override
     @Transactional
-    public void deleteChatRoom(Long chatRoomId) {
+    public void deleteChatRoom(Integer chatRoomId) {
         if (!chatRoomRepository.existsById(chatRoomId)) {
             throw new RuntimeException("채팅방이 존재하지 않습니다.");
         }
         chatRoomRepository.deleteById(chatRoomId); // 삭제 수행
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponseDto> getChatRoomsByUserId(Integer userId) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllBySellerIdOrBuyerId(userId, userId);
+
+        return chatRooms.stream()
+                .map(chatRoom -> ChatRoomResponseDto.builder()
+                        .chatId(chatRoom.getId())
+                        .sellerId(chatRoom.getSellerId())
+                        .buyerId(chatRoom.getBuyerId())
+                        .chatType(chatRoom.getChatType())
+                        .saleBoardId(chatRoom.getSaleBoardId())
+                        .shareBoardId(chatRoom.getShareBoardId())
+                        .createDate(chatRoom.getCreateDate())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
 }

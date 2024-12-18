@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.chat.dto;
+package com.ssafy.ssadang.domain.chat.dto;
 
 import lombok.Getter;
 

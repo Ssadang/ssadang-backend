@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.chat.entity;
+package com.ssafy.ssadang.domain.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -19,7 +19,7 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id")
-    private Long id;
+    private Integer id;
     @Column(name = "seller_id", nullable = false)
     private Integer sellerId;
     @Column(name = "buyer_id", nullable = false)
