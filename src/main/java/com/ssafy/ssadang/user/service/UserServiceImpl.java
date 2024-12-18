@@ -5,7 +5,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ssadang.user.dto.SignupRequestDto;
+import com.ssafy.ssadang.user.entity.RoleRegister;
 import com.ssafy.ssadang.user.entity.User;
+import com.ssafy.ssadang.user.repository.RoleRegisterRepository;
 import com.ssafy.ssadang.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -15,7 +17,10 @@ import jakarta.transaction.Transactional;
 public class UserServiceImpl implements UserService{
 
 	@Autowired
-	private UserRepository repo;
+	private UserRepository userRepo;
+	
+	@Autowired
+	private RoleRegisterRepository roleRegisterRepo;
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -24,9 +29,12 @@ public class UserServiceImpl implements UserService{
 	public int signup(SignupRequestDto dto) {
 		// TODO Auto-generated method stub
 		User user = dto.toUserEntity(passwordEncoder);
-		User saveUser = repo.save(user);
-		System.out.println(saveUser);
-		if(saveUser != null) return 1;
+		User saveUser = userRepo.save(user);
+		RoleRegister roleRegister = new RoleRegister();
+		roleRegister.setRoleId(0); // 0 번 임시사용자
+		roleRegister.setUserId(saveUser.getUserId());
+		RoleRegister saveRoleRegister = roleRegisterRepo.save(roleRegister);
+		if(saveUser != null && saveRoleRegister != null) return 1;
 		else return 0;
 	}
 }
