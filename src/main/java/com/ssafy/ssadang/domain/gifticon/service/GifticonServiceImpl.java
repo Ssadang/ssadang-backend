@@ -1,5 +1,7 @@
 package com.ssafy.ssadang.domain.gifticon.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
@@ -39,6 +41,12 @@ public class GifticonServiceImpl implements GifticonService {
 	@Override
 	public GifticonResponseDto findById(Integer id) {
 		return GifticonResponseDto.fromEntity(gifticonRepository.findById(id).orElseThrow());
+	}
+
+	@Override
+	public List<GifticonResponseDto> findAllByOwnerId(Integer ownerId) {
+		return gifticonRepository.findAllByOwner(userService.findById(ownerId))
+				.stream().map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
 	}
 
 }

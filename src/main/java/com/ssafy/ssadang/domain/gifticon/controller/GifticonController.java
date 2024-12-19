@@ -29,5 +29,10 @@ public class GifticonController {
 	public ResponseEntity<?> findById(@PathVariable Integer id) {
 		return ResponseEntity.ok(gifticonService.findById(id));
 	}
+	
+	@GetMapping("/owner/{owner}")
+	public ResponseEntity<?> findAllByOwnerId(@PathVariable Integer ownerId) {
+		return ResponseEntity.ok(gifticonService.findAllByOwnerId(ownerId));
+	}
 
 }
