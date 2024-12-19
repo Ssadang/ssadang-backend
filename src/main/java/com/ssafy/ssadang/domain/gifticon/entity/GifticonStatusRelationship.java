@@ -1,6 +1,7 @@
 package com.ssafy.ssadang.domain.gifticon.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,11 +21,11 @@ public class GifticonStatusRelationship {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer gifticonStatusRelationshipId;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gifticon_id")
 	@NotNull
 	private Gifticon gifticon;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gifticon_status_id")
 	@NotNull
 	private GifticonStatus gifticonStatus;

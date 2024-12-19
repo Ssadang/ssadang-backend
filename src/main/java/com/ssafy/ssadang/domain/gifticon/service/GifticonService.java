@@ -12,5 +12,7 @@ public interface GifticonService {
 	GifticonResponseDto findById(Integer id);
 	
 	List<GifticonResponseDto> findAllByOwnerId(Integer ownerId);
+	
+	void deleteById(Integer id);
 
 }

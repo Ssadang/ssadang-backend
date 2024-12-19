@@ -1,6 +1,7 @@
 package com.ssafy.ssadang.domain.gifticon.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,12 @@ public class GifticonController {
 	@GetMapping("/owner/{owner}")
 	public ResponseEntity<?> findAllByOwnerId(@PathVariable Integer ownerId) {
 		return ResponseEntity.ok(gifticonService.findAllByOwnerId(ownerId));
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Integer id) {
+		gifticonService.deleteById(id);
+		return ResponseEntity.ok(null);
 	}
 
 }
