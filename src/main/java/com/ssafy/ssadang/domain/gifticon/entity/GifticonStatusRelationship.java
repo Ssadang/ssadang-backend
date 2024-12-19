@@ -11,8 +11,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "gifticon_status_relationship")
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter

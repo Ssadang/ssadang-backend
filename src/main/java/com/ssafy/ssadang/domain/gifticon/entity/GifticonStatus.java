@@ -8,8 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "gifticon_status")
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class GifticonStatus {
