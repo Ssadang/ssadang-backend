@@ -32,7 +32,6 @@ public class GifticonServiceImpl implements GifticonService {
 				.imagePath(imagePath)
 				.expiryDate(gifticonRequestDto.getExpiryDate())
 				.name(gifticonRequestDto.getName())
-				.used(false)
 				.build();
 		Gifticon savedGifticon = gifticonRepository.save(gifticon);
 		return GifticonResponseDto.fromEntity(savedGifticon);

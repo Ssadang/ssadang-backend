@@ -16,7 +16,6 @@ public class GifticonResponseDto {
 	private String imagePath;
 	private LocalDate expiryDate;
 	private String name;
-	private Boolean used;
 	
 	public static GifticonResponseDto fromEntity(Gifticon gifticon) {
 		GifticonResponseDto gifticonDto = GifticonResponseDto.builder()
@@ -25,7 +24,6 @@ public class GifticonResponseDto {
 				.imagePath(gifticon.getImagePath())
 				.expiryDate(gifticon.getExpiryDate())
 				.name(gifticon.getName())
-				.used(gifticon.getUsed())
 				.build();
 		return gifticonDto;
 	}

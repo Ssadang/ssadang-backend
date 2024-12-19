@@ -1,12 +1,6 @@
 package com.ssafy.ssadang.domain.gifticon.entity;
 
-import java.time.LocalDate;
-
-import com.ssafy.ssadang.domain.user.entity.User;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,28 +10,23 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity(name = "gifticon")
-@NoArgsConstructor
+@Entity(name = "gifticon_status_relationship")
 @AllArgsConstructor
 @Builder
 @Getter
-public class Gifticon {
+public class GifticonStatusRelationship {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer gifticonId;
-	@JoinColumn(name = "owner_id")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User owner;
-	@Column(length = 2048)
+	private Integer gifticonStatusRelationshipId;
+	@ManyToOne
+	@JoinColumn(name = "gifticon_id")
 	@NotNull
-	private String imagePath;
+	private Gifticon gifticon;
+	@ManyToOne
+	@JoinColumn(name = "gifticon_status_id")
 	@NotNull
-	private LocalDate expiryDate;
-	@Column(length = 45)
-	@NotNull
-	private String name;
+	private GifticonStatus gifticonStatus;
 
 }
