@@ -33,6 +33,11 @@ public class AmazonS3Uploader {
 	@Value("${cloud.aws.s3.bucket-name}")
 	private String bucketName;
 	
+	/**
+	 * AWS S3에 이미지를 올리고 해당 이미지 URL을 반환하는 메서드
+	 * @param image 이미지 파일
+	 * @return 업로드된 이미지 URL
+	 */
 	public String uploadImage(MultipartFile image) {
 		validateImage(image);
 		String originalFilename = image.getOriginalFilename();
