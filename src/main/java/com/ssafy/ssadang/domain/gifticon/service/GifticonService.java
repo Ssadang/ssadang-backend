@@ -6,5 +6,7 @@ import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
 public interface GifticonService {
 	
 	GifticonResponseDto save(GifticonRequestDto gifticonDto);
+	
+	GifticonResponseDto findById(Integer id);
 
 }

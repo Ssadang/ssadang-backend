@@ -1,6 +1,8 @@
 package com.ssafy.ssadang.domain.gifticon.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,11 @@ public class GifticonController {
 	@PostMapping
 	public GifticonResponseDto save(@ModelAttribute GifticonRequestDto gifticonRequestDto) {
 		return gifticonService.save(gifticonRequestDto);
+	}
+	
+	@GetMapping("/{id}")
+	public GifticonResponseDto findById(@PathVariable Integer id) {
+		return gifticonService.findById(id);
 	}
 
 }

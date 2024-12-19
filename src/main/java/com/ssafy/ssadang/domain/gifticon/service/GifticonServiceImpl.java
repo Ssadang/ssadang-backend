@@ -36,4 +36,9 @@ public class GifticonServiceImpl implements GifticonService {
 		return GifticonResponseDto.fromEntity(savedGifticon);
 	}
 
+	@Override
+	public GifticonResponseDto findById(Integer id) {
+		return GifticonResponseDto.fromEntity(gifticonRepository.findById(id).orElseThrow());
+	}
+
 }
