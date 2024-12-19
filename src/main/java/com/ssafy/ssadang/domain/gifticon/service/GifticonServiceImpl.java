@@ -23,7 +23,7 @@ public class GifticonServiceImpl implements GifticonService {
 	
 	@Override
 	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
-		// TODO owner, imagePath 설정
+		// TODO owner 설정
 		String imagePath = amazonS3Uploader.uploadImage(gifticonRequestDto.getImage());
 		Gifticon gifticon = Gifticon.builder()
 				.owner(userService.findById(gifticonRequestDto.getOwnerId()))
