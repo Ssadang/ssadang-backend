@@ -2,6 +2,7 @@ package com.ssafy.ssadang.domain.gifticon.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,13 +49,20 @@ public class GifticonServiceImpl implements GifticonService {
 
 	@Override
 	public GifticonResponseDto findById(Integer id) {
-		return GifticonResponseDto.fromEntity(gifticonRepository.findById(id).orElseThrow());
+		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
+		if (hasStatus(gifticon, deletedStatus))  {
+			throw new NoSuchElementException();
+		}
+		return GifticonResponseDto.fromEntity(gifticon);
 	}
 
 	@Override
 	public List<GifticonResponseDto> findAllByOwnerId(Integer ownerId) {
-		return gifticonRepository.findAllByOwner(userService.findById(ownerId))
-				.stream().map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
+		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
+		return gifticonRepository.findAllByOwner(userService.findById(ownerId)).stream()
+				.filter(gifticon -> !hasStatus(gifticon, deletedStatus))
+				.map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
 	}
 
 	@Override
