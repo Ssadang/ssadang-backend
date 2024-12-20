@@ -3,6 +3,7 @@ package com.ssafy.ssadang.domain.gifticon.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GifticonServiceImpl implements GifticonService {
 	
 	private final UserService userService;
@@ -62,6 +64,11 @@ public class GifticonServiceImpl implements GifticonService {
 	private void addStatus(Integer gifticonId, Integer gifticonStatusId) {
 		Gifticon gifticon = gifticonRepository.findById(gifticonId).orElseThrow();
 		GifticonStatus gifticonStatus = gifticonStatusRepository.findById(gifticonStatusId).orElseThrow();
+		boolean statusPresent = gifticon.getGifticonStatusRelationships().stream().anyMatch(
+				gifticonStatusRelationship -> gifticonStatusRelationship.getGifticonStatus().equals(gifticonStatus));
+		if (statusPresent) {
+			throw new IllegalArgumentException("Gifticon already has status: " + gifticonStatus.getName());
+		}
 		GifticonStatusRelationship gifticonStatusRelationship = GifticonStatusRelationship.builder()
 				.gifticon(gifticon)
 				.gifticonStatus(gifticonStatus)
