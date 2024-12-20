@@ -1,6 +1,7 @@
 package com.ssafy.ssadang.domain.gifticon.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,14 +59,37 @@ public class GifticonServiceImpl implements GifticonService {
 
 	@Override
 	public void deleteById(Integer id) {
-		addStatus(id, 1);
+		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+		GifticonStatus gifticonStatus = gifticonStatusRepository.findById(1).get();
+		addStatus(gifticon, gifticonStatus);
 	}
 	
-	private void addStatus(Integer gifticonId, Integer gifticonStatusId) {
-		Gifticon gifticon = gifticonRepository.findById(gifticonId).orElseThrow();
-		GifticonStatus gifticonStatus = gifticonStatusRepository.findById(gifticonStatusId).orElseThrow();
-		boolean statusPresent = gifticon.getGifticonStatusRelationships().stream().anyMatch(
+	@Override
+	public void setStatusById(Integer id, Map<String, Integer> status) {
+		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+		switch (status.get("status")) {
+		case 2: // USED
+			useById(gifticon);
+			break;
+		}
+	}
+	
+	private void useById(Gifticon gifticon) {
+		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
+		if (hasStatus(gifticon, deletedStatus)) {
+			throw new IllegalArgumentException("Gifticon alreaady has been deleted");
+		}
+		GifticonStatus usedStatus = gifticonStatusRepository.findById(2).get();
+		addStatus(gifticon, usedStatus);
+	}
+	
+	private boolean hasStatus(Gifticon gifticon, GifticonStatus gifticonStatus) {
+		return gifticon.getGifticonStatusRelationships().stream().anyMatch(
 				gifticonStatusRelationship -> gifticonStatusRelationship.getGifticonStatus().equals(gifticonStatus));
+	}
+	
+	private void addStatus(Gifticon gifticon, GifticonStatus gifticonStatus) {
+		boolean statusPresent = hasStatus(gifticon, gifticonStatus);
 		if (statusPresent) {
 			throw new IllegalArgumentException("Gifticon already has status: " + gifticonStatus.getName());
 		}
