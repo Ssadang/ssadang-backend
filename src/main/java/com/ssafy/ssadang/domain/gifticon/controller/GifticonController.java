@@ -3,6 +3,7 @@ package com.ssafy.ssadang.domain.gifticon.controller;
 import java.net.URI;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +27,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GifticonController {
 	
+	@Value("${server.servlet.context-path}")
+	private String contextPath;
+	
 	private final GifticonService gifticonService;
 	
 	@PostMapping
 	public ResponseEntity<?> save(@Valid @ModelAttribute GifticonRequestDto gifticonRequestDto) {
 		GifticonResponseDto gifticonResponseDto = gifticonService.save(gifticonRequestDto);
-		return ResponseEntity.created(URI.create("/api/v1/gifticon/" + gifticonResponseDto.getGifticonId()))
+		return ResponseEntity.created(URI.create(contextPath + "/api/v1/gifticon/" + gifticonResponseDto.getGifticonId()))
 				.body(gifticonResponseDto);
 	}
 	
