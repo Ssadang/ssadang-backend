@@ -60,7 +60,7 @@ public class GifticonServiceImpl implements GifticonService {
 	@Override
 	public List<GifticonResponseDto> findAllByOwnerId(Integer ownerId) {
 		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
-		return gifticonRepository.findAllByOwner(userService.findById(ownerId)).stream()
+		return gifticonRepository.findAllByOwnerOrderByExpiryDate(userService.findById(ownerId)).stream()
 				.filter(gifticon -> !hasStatus(gifticon, deletedStatus))
 				.map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
 	}

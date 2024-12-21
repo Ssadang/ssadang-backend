@@ -9,6 +9,6 @@ import com.ssafy.ssadang.domain.user.entity.User;
 
 public interface GifticonRepository extends JpaRepository<Gifticon, Integer> {
 	
-	List<Gifticon> findAllByOwner(User owner);
+	List<Gifticon> findAllByOwnerOrderByExpiryDate(User owner);
 
 }
