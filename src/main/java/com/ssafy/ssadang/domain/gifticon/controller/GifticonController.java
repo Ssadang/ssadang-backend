@@ -1,5 +1,6 @@
 package com.ssafy.ssadang.domain.gifticon.controller;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
+import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
 import com.ssafy.ssadang.domain.gifticon.service.GifticonService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,8 +29,10 @@ public class GifticonController {
 	private final GifticonService gifticonService;
 	
 	@PostMapping
-	public ResponseEntity<?> save(@ModelAttribute GifticonRequestDto gifticonRequestDto) {
-		return ResponseEntity.ok(gifticonService.save(gifticonRequestDto));
+	public ResponseEntity<?> save(@Valid @ModelAttribute GifticonRequestDto gifticonRequestDto) {
+		GifticonResponseDto gifticonResponseDto = gifticonService.save(gifticonRequestDto);
+		return ResponseEntity.created(URI.create("/api/v1/gifticon/" + gifticonResponseDto.getGifticonId()))
+				.body(gifticonResponseDto);
 	}
 	
 	@GetMapping("/{id}")
