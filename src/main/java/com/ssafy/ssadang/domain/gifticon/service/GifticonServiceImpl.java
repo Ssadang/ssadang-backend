@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
@@ -36,7 +37,11 @@ public class GifticonServiceImpl implements GifticonService {
 	@Override
 	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
 		// TODO owner 설정
-		String imagePath = amazonS3Uploader.uploadImage(gifticonRequestDto.getImage());
+		MultipartFile image = gifticonRequestDto.getImage();
+		if (image == null) {
+			throw new IllegalArgumentException();
+		}
+		String imagePath = amazonS3Uploader.uploadImage(image);
 		Gifticon gifticon = Gifticon.builder()
 				.owner(userService.findById(gifticonRequestDto.getOwnerId()))
 				.imagePath(imagePath)
