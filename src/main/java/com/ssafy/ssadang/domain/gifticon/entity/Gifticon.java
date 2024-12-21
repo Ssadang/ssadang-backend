@@ -32,6 +32,7 @@ public class Gifticon {
 	private Integer gifticonId;
 	@JoinColumn(name = "owner_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
 	private User owner;
 	@Column(length = 2048)
 	@NotNull
