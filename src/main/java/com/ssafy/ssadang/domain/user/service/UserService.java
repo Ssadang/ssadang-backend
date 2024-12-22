@@ -1,9 +1,10 @@
 package com.ssafy.ssadang.domain.user.service;
 
-import org.springframework.stereotype.Service;
-
 import com.ssafy.ssadang.domain.user.dto.SignupRequestDto;
+import com.ssafy.ssadang.domain.user.entity.User;
 
 public interface UserService {
 	public int signup(SignupRequestDto dto);
+	
+	User findById(Integer id);
 }

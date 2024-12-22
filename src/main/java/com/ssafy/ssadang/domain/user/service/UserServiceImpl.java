@@ -37,4 +37,9 @@ public class UserServiceImpl implements UserService{
 		if(saveUser != null && saveRoleRegister != null) return 1;
 		else return 0;
 	}
+
+	@Override
+	public User findById(Integer id) {
+		return userRepo.findById(id).orElseThrow();
+	}
 }
