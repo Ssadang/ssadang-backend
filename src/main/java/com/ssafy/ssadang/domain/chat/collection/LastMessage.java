@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,4 +17,5 @@ public class LastMessage {
     private Integer chatRoomId;
     private String content;
     private LocalDateTime createDate;
+    private Set<Integer> senderIds;
 }
