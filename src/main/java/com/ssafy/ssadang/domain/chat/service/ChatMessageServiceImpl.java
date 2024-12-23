@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
-
+    private final LastMessageService lastMessageService;
     @Override
     public ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, Integer chatRoomId) {
         ChatMessage chatMessage = ChatMessage.builder()
@@ -25,7 +25,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .build();
 
         chatMessageRepository.save(chatMessage);
-
+        lastMessageService.updateLastMessage(chatRoomId, request.content(), LocalDateTime.now(), request.sender());
         return new ChatMessageResponseDto(
                 chatMessage.getSender(),
                 chatMessage.getContent(),
