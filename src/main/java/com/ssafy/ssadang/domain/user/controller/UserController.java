@@ -2,6 +2,7 @@ package com.ssafy.ssadang.domain.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ public class UserController {
 	UserService service;
 	
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@RequestBody SignupRequestDto signupRequestDto) {
+	public ResponseEntity<?> signup(@ModelAttribute SignupRequestDto signupRequestDto) {
 		return ResponseEntity.ok(service.signup(signupRequestDto));
 	}
 }
