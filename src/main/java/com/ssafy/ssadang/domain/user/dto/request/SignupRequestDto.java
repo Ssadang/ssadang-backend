@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.domain.user.dto;
+package com.ssafy.ssadang.domain.user.dto.request;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
