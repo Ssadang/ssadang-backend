@@ -39,6 +39,13 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.apache.commons:commons-dbcp2'
 	
+	//mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//thymeleaf(for email service)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	
 	// spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
@@ -51,6 +58,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     //mongodb
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

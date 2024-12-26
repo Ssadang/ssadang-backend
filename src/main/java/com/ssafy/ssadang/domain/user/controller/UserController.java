@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.ssadang.domain.user.dto.EmailSendRequestDto;
 import com.ssafy.ssadang.domain.user.dto.SignupRequestDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 
@@ -20,5 +21,10 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@ModelAttribute SignupRequestDto signupRequestDto) {
 		return ResponseEntity.ok(service.signup(signupRequestDto));
+	}
+	
+	@PostMapping("/sendmail")
+	public ResponseEntity<?> sendmail(@RequestBody EmailSendRequestDto dto){
+		return ResponseEntity.ok(service.sendmail(dto));
 	}
 }
