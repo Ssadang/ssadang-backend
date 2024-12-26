@@ -60,6 +60,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    
 }
 
 tasks.named('test') {
