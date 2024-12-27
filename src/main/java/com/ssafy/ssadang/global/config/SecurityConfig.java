@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ssafy.ssadang.global.security.LoginFilter;
 
 // 인가 및 설정을 담당
 @Configuration
@@ -32,6 +35,8 @@ public class SecurityConfig {
 		http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/**").permitAll() // 로그인 안해도 인가를 얻을 수 있음
                 .anyRequest().authenticated());// 로그인 해야 인가를 얻을 수 있음
+		http.addFilterAt(new LoginFilter(), UsernamePasswordAuthenticationFilter.class);
+		
 		// 세션을 서버에서 관리 하지않겠다라는걸 명시
         http
         .sessionManagement((session) -> session
