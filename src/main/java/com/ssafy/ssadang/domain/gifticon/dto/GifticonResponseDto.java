@@ -20,7 +20,7 @@ public class GifticonResponseDto {
 	public static GifticonResponseDto fromEntity(Gifticon gifticon) {
 		GifticonResponseDto gifticonDto = GifticonResponseDto.builder()
 				.gifticonId(gifticon.getGifticonId())
-				.ownerId(gifticon.getOwner().getUserId())
+				.ownerId(gifticon.getOwnerId())
 				.imagePath(gifticon.getImagePath())
 				.expiryDate(gifticon.getExpiryDate())
 				.name(gifticon.getName())

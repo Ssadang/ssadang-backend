@@ -10,11 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
 import com.ssafy.ssadang.domain.gifticon.entity.Gifticon;
-import com.ssafy.ssadang.domain.gifticon.entity.GifticonStatus;
 import com.ssafy.ssadang.domain.gifticon.entity.GifticonStatusRelationship;
 import com.ssafy.ssadang.domain.gifticon.repository.GifticonRepository;
 import com.ssafy.ssadang.domain.gifticon.repository.GifticonStatusRelationshipRepository;
-import com.ssafy.ssadang.domain.gifticon.repository.GifticonStatusRepository;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
 
@@ -31,14 +29,13 @@ public class GifticonServiceImpl implements GifticonService {
 	
 	private final GifticonRepository gifticonRepository;
 	private final GifticonStatusRelationshipRepository gifticonStatusRelationshipRepository;
-	private final GifticonStatusRepository gifticonStatusRepository;
 	
 	@Override
 	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
 		// TODO owner 설정
 		String imagePath = amazonS3Uploader.uploadImage(gifticonRequestDto.getImage());
 		Gifticon gifticon = Gifticon.builder()
-				.owner(userService.findById(gifticonRequestDto.getOwnerId()))
+				.ownerId(gifticonRequestDto.getOwnerId())
 				.imagePath(imagePath)
 				.expiryDate(gifticonRequestDto.getExpiryDate())
 				.name(gifticonRequestDto.getName())
@@ -50,8 +47,7 @@ public class GifticonServiceImpl implements GifticonService {
 	@Override
 	public GifticonResponseDto findById(Integer id) {
 		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
-		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
-		if (hasStatus(gifticon, deletedStatus))  {
+		if (hasStatus(gifticon, 1))  {
 			throw new NoSuchElementException();
 		}
 		return GifticonResponseDto.fromEntity(gifticon);
@@ -59,17 +55,15 @@ public class GifticonServiceImpl implements GifticonService {
 
 	@Override
 	public List<GifticonResponseDto> findAllByOwnerId(Integer ownerId) {
-		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
-		return gifticonRepository.findAllByOwnerOrderByExpiryDate(userService.findById(ownerId)).stream()
-				.filter(gifticon -> !hasStatus(gifticon, deletedStatus))
+		return gifticonRepository.findAllByOwnerIdOrderByExpiryDate(userService.findDtoById(ownerId).getUserId())
+				.stream().filter(gifticon -> !hasStatus(gifticon, 1))
 				.map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
 	}
 
 	@Override
 	public void deleteById(Integer id) {
 		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
-		GifticonStatus gifticonStatus = gifticonStatusRepository.findById(1).get();
-		addStatus(gifticon, gifticonStatus);
+		addStatus(gifticon, 1);
 	}
 	
 	@Override
@@ -83,27 +77,26 @@ public class GifticonServiceImpl implements GifticonService {
 	}
 	
 	private void useById(Gifticon gifticon) {
-		GifticonStatus deletedStatus = gifticonStatusRepository.findById(1).get();
-		if (hasStatus(gifticon, deletedStatus)) {
+		if (hasStatus(gifticon, 1)) {
 			throw new IllegalArgumentException("Gifticon alreaady has been deleted");
 		}
-		GifticonStatus usedStatus = gifticonStatusRepository.findById(2).get();
-		addStatus(gifticon, usedStatus);
+		addStatus(gifticon, 2);
 	}
 	
-	private boolean hasStatus(Gifticon gifticon, GifticonStatus gifticonStatus) {
-		return gifticon.getGifticonStatusRelationships().stream().anyMatch(
-				gifticonStatusRelationship -> gifticonStatusRelationship.getGifticonStatus().equals(gifticonStatus));
+	private boolean hasStatus(Gifticon gifticon, Integer gifticonStatusId) {
+		return gifticonStatusRelationshipRepository.findAllByGifticonId(gifticon.getGifticonId()).stream()
+				.anyMatch(gifticonStatusRelationship -> gifticonStatusRelationship.getGifticonStatusId()
+						.equals(gifticonStatusId));
 	}
 	
-	private void addStatus(Gifticon gifticon, GifticonStatus gifticonStatus) {
-		boolean statusPresent = hasStatus(gifticon, gifticonStatus);
+	private void addStatus(Gifticon gifticon, Integer gifticonStatusId) {
+		boolean statusPresent = hasStatus(gifticon, gifticonStatusId);
 		if (statusPresent) {
-			throw new IllegalArgumentException("Gifticon already has status: " + gifticonStatus.getName());
+			throw new IllegalArgumentException("Gifticon already has the status: " + gifticonStatusId);
 		}
 		GifticonStatusRelationship gifticonStatusRelationship = GifticonStatusRelationship.builder()
-				.gifticon(gifticon)
-				.gifticonStatus(gifticonStatus)
+				.gifticonId(gifticon.getGifticonId())
+				.gifticonStatusId(gifticonStatusId)
 				.build();
 		gifticonStatusRelationshipRepository.save(gifticonStatusRelationship);
 	}
