@@ -1,12 +1,12 @@
 package com.ssafy.ssadang.domain.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ssadang.domain.user.dto.UserDto;
 import com.ssafy.ssadang.domain.user.dto.request.EmailAuthNumberRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.EmailSendRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.SignupRequestDto;
@@ -72,8 +72,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findById(Integer id) {
-		return userRepo.findById(id).orElseThrow();
+	public UserDto findDtoById(Integer id) {
+		return UserDto.fromEntity(userRepo.findById(id).orElseThrow());
+	}
+	
+	@Override
+	public UserDto findDtoByEmail(String email) {
+		return UserDto.fromEntity(userRepo.findByEmail(email).orElseThrow());
 	}
 
 	@Override
