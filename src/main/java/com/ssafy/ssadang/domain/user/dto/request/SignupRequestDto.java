@@ -1,13 +1,12 @@
-package com.ssafy.ssadang.domain.user.dto;
+package com.ssafy.ssadang.domain.user.dto.request;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ssadang.domain.user.entity.User;
+import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
 @Data
@@ -17,20 +16,17 @@ public class SignupRequestDto {
 	private String name;
 	private String nickname;
 	private int areaId;
-	private String profileImgUrl;
-	private String proveImgUrl;
+	private MultipartFile profileImg;
+	private MultipartFile proveImg;
 	private int grade;
 	
-	public User toUserEntity(BCryptPasswordEncoder passwordEncoder) {
+	public User toUserEntity() {
 		return User
 				.builder()
 				.email(email)
-				.password(passwordEncoder.encode(password))
 				.name(name)
 				.nickname(nickname)
 				.areaId(areaId)
-				.profileImgUrl(profileImgUrl)
-				.proveImgUrl(proveImgUrl)
 				.grade(grade)
 				.build();
 	}
