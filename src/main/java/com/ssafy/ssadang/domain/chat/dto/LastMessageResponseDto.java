@@ -1,19 +1,14 @@
-package com.ssafy.ssadang.domain.chat.collection;
+package com.ssafy.ssadang.domain.chat.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
 @Builder
-@Document(collection = "lastMessage")
-public class LastMessage {
-    @Id
-    private String id;
+public class LastMessageResponseDto {
     private Integer chatRoomId;
     private String content;
     private LocalDateTime createDate;
@@ -22,5 +17,4 @@ public class LastMessage {
     private Integer saleBoardId;
     private Integer shareBoardId;
     private Integer unReadCount;
-
 }

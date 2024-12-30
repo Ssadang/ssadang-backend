@@ -18,13 +18,15 @@ public class ChatMessage {
     private String content;
     private LocalDateTime createDate;
     private Integer chatRoomId;
+    private boolean isRead;
 
     @Builder
-    public ChatMessage(Integer sender, String content, LocalDateTime createDate, Integer chatRoomId) {
+    public ChatMessage(Integer sender, String content, LocalDateTime createDate, Integer chatRoomId, boolean isRead) {
         this.sender = sender;
         this.content = content;
         this.createDate = createDate;
         this.chatRoomId = chatRoomId;
+        this.isRead = false;
     }
 
 }
