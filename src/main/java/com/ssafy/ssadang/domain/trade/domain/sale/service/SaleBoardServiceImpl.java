@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardResponseDto;
-import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleBoard;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleFavorite;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleImage;
@@ -52,20 +52,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				.hitCount(0)
 				.build();
 		SaleBoard savedSaleBoard = saleBoardRepository.save(saleBoard);
-		
-		List<SaleImage> saleImages = new ArrayList<>();
-		List<String> imagePaths = new ArrayList<>();
-		for (MultipartFile image : saleBoardRequestDto.getImages()) {
-			String path = amazonS3Uploader.uploadImage(image);
-			SaleImage saleImage = SaleImage.builder()
-					.saleBoardId(savedSaleBoard.getSaleBoardId())
-					.path(path)
-					.build();
-			saleImages.add(saleImage);
-			imagePaths.add(path);
-		}
-		saleImageRepository.saveAll(saleImages);
-		
+		saveImages(savedSaleBoard.getSaleBoardId(), saleBoardRequestDto.getImages());
 		return toSaleBoardResponseDto(savedSaleBoard, authorDto);
 	}
 	
@@ -83,6 +70,28 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				.findAllByItemCategoryIdOrderByCreateDateDesc(itemCategoryId);
 		return similarSaleBoards.stream()
 				.map(saleBoard -> toSaleBoardDto(saleBoard, loginUserId)).toList();
+	}
+	
+	@Override
+	public SaleBoardResponseDto view(Integer loginUserId, Integer saleBoardid) {
+		SaleBoard saleBoard = saleBoardRepository.findById(saleBoardid).orElseThrow();
+		return toSaleBoardResponseDto(saleBoard, userService.findDtoById(loginUserId));
+	}
+	
+	private void saveImages(Integer saleBoardId, List<MultipartFile> images) {
+		if (images == null || images.isEmpty()) {
+			return;
+		}
+		List<SaleImage> saleImages = new ArrayList<>();
+		for (MultipartFile image : images) {
+			String path = amazonS3Uploader.uploadImage(image);
+			SaleImage saleImage = SaleImage.builder()
+					.saleBoardId(saleBoardId)
+					.path(path)
+					.build();
+			saleImages.add(saleImage);
+		}
+		saleImageRepository.saveAll(saleImages);
 	}
 	
 	private SaleBoardDto toSaleBoardDto(SaleBoard saleBoard, Integer loginUserId) {
@@ -109,7 +118,6 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				loginUserDto.getUserId()).stream()
 				.filter(dto -> !dto.getSaleBoardId().equals(saleBoard.getSaleBoardId()))
 				.toList();
-		
 		return new SaleBoardResponseDto(saleBoardDto, sameAuthorSaleBoardDtos, similarSaleBoardDtos);
 	}
 

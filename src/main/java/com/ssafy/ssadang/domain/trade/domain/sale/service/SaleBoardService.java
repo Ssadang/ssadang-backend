@@ -13,5 +13,7 @@ public interface SaleBoardService {
 	List<SaleBoardDto> findAllDtoByAuthorId(Integer authorId, Integer currentUserId);
 	
 	List<SaleBoardDto> findAllDtoByItemCategoryId(Integer itemCategoryId, Integer currentUserId);
+	
+	SaleBoardResponseDto view(Integer loginUserId, Integer saleBoardid);
 
 }

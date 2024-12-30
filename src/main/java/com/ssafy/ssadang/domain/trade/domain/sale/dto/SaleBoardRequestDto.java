@@ -1,5 +1,7 @@
 package com.ssafy.ssadang.domain.trade.domain.sale.dto;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +18,7 @@ public class SaleBoardRequestDto {
 	private String description;
 	@NotNull
 	private Integer price;
-	private MultipartFile[] images;
+	private List<MultipartFile> images;
 	@NotNull
 	private Integer areaId;
 	private Integer gifticonId;
