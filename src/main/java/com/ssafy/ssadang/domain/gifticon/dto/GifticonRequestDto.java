@@ -13,8 +13,6 @@ import lombok.Getter;
 public class GifticonRequestDto {
 	
 	@NotNull
-	private Integer ownerId;
-	@NotNull
 	private MultipartFile image;
 	@NotNull
 	private LocalDate expiryDate;

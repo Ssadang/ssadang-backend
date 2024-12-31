@@ -8,14 +8,14 @@ import com.ssafy.ssadang.domain.gifticon.dto.GifticonResponseDto;
 
 public interface GifticonService {
 	
-	GifticonResponseDto save(GifticonRequestDto gifticonDto);
+	GifticonResponseDto save(Integer ownerId, GifticonRequestDto gifticonDto);
 	
-	GifticonResponseDto findById(Integer id);
+	GifticonResponseDto findById(Integer ownerId, Integer gifticonId);
 	
-	List<GifticonResponseDto> findAllByOwnerId(Integer ownerId);
+	List<GifticonResponseDto> findByOwnerId(Integer ownerId);
 	
-	void deleteById(Integer id);
+	void deleteById(Integer ownerId, Integer gifticonId);
 	
-	void setStatusById(Integer id, Map<String, Integer> status);
+	void setStatusById(Integer ownerId, Integer gifticonId, Map<String, Integer> status);
 
 }

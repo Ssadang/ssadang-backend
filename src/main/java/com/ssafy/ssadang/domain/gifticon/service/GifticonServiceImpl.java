@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +32,10 @@ public class GifticonServiceImpl implements GifticonService {
 	private final GifticonStatusRelationshipRepository gifticonStatusRelationshipRepository;
 	
 	@Override
-	public GifticonResponseDto save(GifticonRequestDto gifticonRequestDto) {
-		// TODO owner 설정
+	public GifticonResponseDto save(Integer ownerId, GifticonRequestDto gifticonRequestDto) {
 		String imagePath = amazonS3Uploader.uploadImage(gifticonRequestDto.getImage());
 		Gifticon gifticon = Gifticon.builder()
-				.ownerId(gifticonRequestDto.getOwnerId())
+				.ownerId(ownerId)
 				.imagePath(imagePath)
 				.expiryDate(gifticonRequestDto.getExpiryDate())
 				.name(gifticonRequestDto.getName())
@@ -45,8 +45,11 @@ public class GifticonServiceImpl implements GifticonService {
 	}
 
 	@Override
-	public GifticonResponseDto findById(Integer id) {
-		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+	public GifticonResponseDto findById(Integer ownerId, Integer gifticonId) {
+		Gifticon gifticon = gifticonRepository.findById(gifticonId).orElseThrow();
+		if (!ownerId.equals(gifticon.getOwnerId())) {
+			throw new AccessDeniedException("Access denied");
+		}
 		if (hasStatus(gifticon, 1))  {
 			throw new NoSuchElementException();
 		}
@@ -54,31 +57,37 @@ public class GifticonServiceImpl implements GifticonService {
 	}
 
 	@Override
-	public List<GifticonResponseDto> findAllByOwnerId(Integer ownerId) {
+	public List<GifticonResponseDto> findByOwnerId(Integer ownerId) {
 		return gifticonRepository.findAllByOwnerIdOrderByExpiryDate(userService.findDtoById(ownerId).getUserId())
 				.stream().filter(gifticon -> !hasStatus(gifticon, 1))
 				.map(giftion -> GifticonResponseDto.fromEntity(giftion)).toList();
 	}
 
 	@Override
-	public void deleteById(Integer id) {
-		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+	public void deleteById(Integer ownerId, Integer gifticonId) {
+		Gifticon gifticon = gifticonRepository.findById(gifticonId).orElseThrow();
+		if (!ownerId.equals(gifticon.getOwnerId())) {
+			throw new AccessDeniedException("Access denied");
+		}
 		addStatus(gifticon, 1);
 	}
 	
 	@Override
-	public void setStatusById(Integer id, Map<String, Integer> status) {
-		Gifticon gifticon = gifticonRepository.findById(id).orElseThrow();
+	public void setStatusById(Integer ownerId, Integer gifticonId, Map<String, Integer> status) {
+		Gifticon gifticon = gifticonRepository.findById(gifticonId).orElseThrow();
+		if (!ownerId.equals(gifticon.getOwnerId())) {
+			throw new AccessDeniedException("Access denied");
+		}
 		switch (status.get("status")) {
 		case 2: // USED
-			useById(gifticon);
+			use(gifticon);
 			break;
 		}
 	}
 	
-	private void useById(Gifticon gifticon) {
+	private void use(Gifticon gifticon) {
 		if (hasStatus(gifticon, 1)) {
-			throw new IllegalArgumentException("Gifticon alreaady has been deleted");
+			throw new NoSuchElementException();
 		}
 		addStatus(gifticon, 2);
 	}

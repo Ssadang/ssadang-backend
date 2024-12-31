@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
@@ -33,31 +35,46 @@ public class GifticonController {
 	private final GifticonService gifticonService;
 	
 	@PostMapping
-	public ResponseEntity<?> save(@Valid @ModelAttribute GifticonRequestDto gifticonRequestDto) {
-		GifticonResponseDto gifticonResponseDto = gifticonService.save(gifticonRequestDto);
+	public ResponseEntity<?> save(
+			@AuthenticationPrincipal Object owner,
+			@Valid @ModelAttribute GifticonRequestDto gifticonRequestDto) {
+		Integer ownerId = 1;
+		GifticonResponseDto gifticonResponseDto = gifticonService.save(ownerId, gifticonRequestDto);
 		return ResponseEntity.created(URI.create(contextPath + "/api/v1/gifticon/" + gifticonResponseDto.getGifticonId()))
 				.body(gifticonResponseDto);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(gifticonService.findById(id));
+	public ResponseEntity<?> findById(
+			@AuthenticationPrincipal Object owner,
+			@PathVariable Integer id) {
+		Integer ownerId = 1;
+		return ResponseEntity.ok(gifticonService.findById(ownerId, id));
 	}
 	
-	@GetMapping("/owner/{ownerId}")
-	public ResponseEntity<?> findAllByOwnerId(@PathVariable Integer ownerId) {
-		return ResponseEntity.ok(gifticonService.findAllByOwnerId(ownerId));
+	@GetMapping
+	public ResponseEntity<?> findAll(
+			@AuthenticationPrincipal Object owner,
+			@RequestParam Integer gifticonId) {
+		Integer ownerId = 1;
+		return ResponseEntity.ok(gifticonService.findByOwnerId(ownerId));
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable Integer id) {
-		gifticonService.deleteById(id);
+	public ResponseEntity<?> deleteById(
+			@AuthenticationPrincipal Object owner,
+			@PathVariable Integer id) {
+		Integer ownerId = 1;
+		gifticonService.deleteById(ownerId, id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> setStatusById(@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
-		gifticonService.setStatusById(id, status);
+	public ResponseEntity<?> setStatusById(
+			@AuthenticationPrincipal Object owner,
+			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
+		Integer ownerId = 1;
+		gifticonService.setStatusById(ownerId, id, status);
 		return ResponseEntity.ok(null);
 	}
 
