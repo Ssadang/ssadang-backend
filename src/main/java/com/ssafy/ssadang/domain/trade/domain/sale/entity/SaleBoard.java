@@ -43,5 +43,9 @@ public class SaleBoard {
 	private Integer gifticonId;
 	@NotNull
 	private Integer hitCount;
+	
+	public void setHitCount(Integer hitCount) {
+		this.hitCount = hitCount;
+	}
 
 }
