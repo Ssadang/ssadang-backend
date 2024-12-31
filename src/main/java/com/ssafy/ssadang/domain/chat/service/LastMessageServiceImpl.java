@@ -46,6 +46,11 @@ public class LastMessageServiceImpl implements LastMessageService {
 
     @Override
     public List<LastMessage> findChatRoomsByUserId(Integer userId) {
+        List<LastMessage> emptyChatRooms = lastMessageRepository.findBySenderIdsContainingAndContentIsNull(userId);
+        if(!emptyChatRooms.isEmpty()) {
+            lastMessageRepository.deleteAll(emptyChatRooms);
+            System.out.println("빈채팅방 처리 " + emptyChatRooms.size());
+        }
         return lastMessageRepository.findBySenderIdsContaining(userId, Sort.by(Sort.Direction.DESC, "createDate"));
     }
 
