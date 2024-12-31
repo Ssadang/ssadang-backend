@@ -4,6 +4,7 @@ import com.ssafy.ssadang.domain.chat.collection.ChatMessage;
 import com.ssafy.ssadang.domain.chat.dto.ChatMessageRequestDto;
 import com.ssafy.ssadang.domain.chat.dto.ChatMessageResponseDto;
 import com.ssafy.ssadang.domain.chat.repository.ChatMessageRepository;
+import com.ssafy.ssadang.domain.chat.repository.LastMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
+    private final LastMessageService lastMessageService;
     @Override
-    public ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, Integer chatRoomId) {
+    public ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, String chatRoomId) {
         ChatMessage chatMessage = ChatMessage.builder()
                 .sender(request.sender())
                 .content(request.content())
@@ -25,6 +27,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .build();
 
         chatMessageRepository.save(chatMessage);
+        lastMessageService.updateLastMessage(chatRoomId, chatMessage.getContent(), chatMessage.getCreateDate());
 
         return new ChatMessageResponseDto(
                 chatMessage.getSender(),
@@ -34,7 +37,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public List<ChatMessage> getChatMessagesByChatRoomId(Integer chatRoomId) {
+    public List<ChatMessage> getChatMessagesByChatRoomId(String chatRoomId) {
         return chatMessageRepository.findByChatRoomId(chatRoomId);
     }
 
