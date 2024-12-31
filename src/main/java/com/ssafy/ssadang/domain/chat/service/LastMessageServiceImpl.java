@@ -4,6 +4,7 @@ import com.ssafy.ssadang.domain.chat.collection.LastMessage;
 import com.ssafy.ssadang.domain.chat.dto.LastMessageRequestDto;
 import com.ssafy.ssadang.domain.chat.repository.LastMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class LastMessageServiceImpl implements LastMessageService {
 
     @Override
     public List<LastMessage> findChatRoomsByUserId(Integer userId) {
-        return lastMessageRepository.findBySenderIdsContaining(userId);
+        return lastMessageRepository.findBySenderIdsContaining(userId, Sort.by(Sort.Direction.DESC, "createDate"));
     }
 
     @Override
