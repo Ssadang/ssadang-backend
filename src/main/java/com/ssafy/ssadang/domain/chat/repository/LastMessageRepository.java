@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LastMessageRepository extends MongoRepository<LastMessage, String> {
-    Optional<LastMessage> findByChatRoomId(Integer chatRoomId);
+    //기존 채팅방있는가 확인
+    Optional<LastMessage> findByChatTypeAndSenderIdsContainingAndSaleBoardIdAndShareBoardId(Integer chatType, Integer userId, Integer saleBoardId, Integer shareBoardId);
     List<LastMessage> findBySenderIdsContaining(Integer userId);
 }

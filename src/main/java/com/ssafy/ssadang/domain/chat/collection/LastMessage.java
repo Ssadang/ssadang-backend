@@ -14,7 +14,6 @@ import java.util.Set;
 public class LastMessage {
     @Id
     private String id;
-    private Integer chatRoomId;
     private String content;
     private LocalDateTime createDate;
     private Set<Integer> senderIds;
