@@ -12,7 +12,9 @@ public interface GifticonService {
 	
 	GifticonResponseDto findById(Integer ownerId, Integer gifticonId);
 	
-	List<GifticonResponseDto> findByOwnerId(Integer ownerId);
+	List<GifticonResponseDto> findExpiredPage(Integer ownerId, Integer cursorId);
+	
+	List<GifticonResponseDto> findUnexpiredPage(Integer ownerId, Integer cursorId);
 	
 	void deleteById(Integer ownerId, Integer gifticonId);
 	

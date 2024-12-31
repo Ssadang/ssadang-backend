@@ -51,10 +51,20 @@ public class GifticonController {
 		return ResponseEntity.ok(gifticonService.findById(ownerId, id));
 	}
 	
-	@GetMapping
-	public ResponseEntity<?> findAll(@AuthenticationPrincipal Object owner) {
+	@GetMapping("/expired")
+	public ResponseEntity<?> findAllExpired(
+			@AuthenticationPrincipal Object owner,
+			Integer cursorId) {
 		Integer ownerId = 1;
-		return ResponseEntity.ok(gifticonService.findByOwnerId(ownerId));
+		return ResponseEntity.ok(gifticonService.findExpiredPage(ownerId, cursorId));
+	}
+	
+	@GetMapping("/unexpired")
+	public ResponseEntity<?> findAllUnexpired(
+			@AuthenticationPrincipal Object owner,
+			Integer cursorId) {
+		Integer ownerId = 1;
+		return ResponseEntity.ok(gifticonService.findUnexpiredPage(ownerId, cursorId));
 	}
 	
 	@DeleteMapping("/{id}")
