@@ -18,40 +18,29 @@ public class LastMessageServiceImpl implements LastMessageService {
     private final LastMessageRepository lastMessageRepository;
 
     @Override
-    public Optional<LastMessage> findLastMessageByChatRoomId(Integer chatRoomId) {
-        return lastMessageRepository.findByChatRoomId(chatRoomId);
-    }
+    public String createOrFindChatRoom(LastMessageRequestDto requestDto, Integer loginUserId) {
+        Optional<LastMessage> existingRoom = lastMessageRepository.findByChatTypeAndSenderIdsContainingAndSaleBoardIdAndShareBoardId(requestDto.getChatType(), loginUserId, requestDto.getSaleBoardId(), requestDto.getShareBoardId());
 
-    @Override
-    public void saveLastMessage(LastMessageRequestDto requestDto, Integer loginUserId) {
-        Set<Integer> senderIds = new HashSet<>();
-        senderIds.add(requestDto.getSenderId());
-        senderIds.add(loginUserId);
+        if (existingRoom.isPresent()) {
+            return existingRoom.get().getId();
+        } else {
+            Set<Integer> senderIds = new HashSet<>();
+            senderIds.add(requestDto.getSenderId());
+            senderIds.add(loginUserId);
 
-        lastMessageRepository.findByChatRoomId(requestDto.getChatRoomId())
-                .ifPresentOrElse(
-                        existingMessage -> {
-                            existingMessage.setContent(requestDto.getContent());
-                            existingMessage.setCreateDate(LocalDateTime.now());
-                            existingMessage.getSenderIds().addAll(senderIds);
-                            lastMessageRepository.save(existingMessage);
-                        },
-                        () -> {
-                            LastMessage newLastMessage = LastMessage.builder()
-                                    .chatRoomId(requestDto.getChatRoomId())
-                                    .content(requestDto.getContent())
-                                    .createDate(LocalDateTime.now())
-                                    .senderIds(senderIds)
-                                    .chatType(requestDto.getChatType())
-                                    .saleBoardId(requestDto.getSaleBoardId())
-                                    .shareBoardId(requestDto.getShareBoardId())
-                                    .unReadCount(0)
-                                    .build();
-                            lastMessageRepository.save(newLastMessage);
-                        }
-                );
+            LastMessage newLastMessage = LastMessage.builder()
+                    .content(requestDto.getContent())
+                    .createDate(LocalDateTime.now())
+                    .senderIds(senderIds)
+                    .chatType(requestDto.getChatType())
+                    .saleBoardId(requestDto.getSaleBoardId())
+                    .shareBoardId(requestDto.getShareBoardId())
+                    .unReadCount(0)
+                    .build();
 
-
+            LastMessage savedMessage = lastMessageRepository.save(newLastMessage);
+            return savedMessage.getId();
+        }
     }
 
     @Override
@@ -60,8 +49,8 @@ public class LastMessageServiceImpl implements LastMessageService {
     }
 
     @Override
-    public void leaveChatRoom(Integer chatRoomId, Integer userId) {
-        Optional<LastMessage> lastMessage = lastMessageRepository.findByChatRoomId(chatRoomId);
+    public void leaveChatRoom(String id, Integer userId) {
+        Optional<LastMessage> lastMessage = lastMessageRepository.findById(id);
 
         if (lastMessage.isPresent()) {
             LastMessage lastMessageEntity = lastMessage.get();
@@ -76,7 +65,7 @@ public class LastMessageServiceImpl implements LastMessageService {
                 lastMessageRepository.save(lastMessageEntity);
             }
         } else {
-            throw new IllegalArgumentException("Chat room not found for chatRoomId: " + chatRoomId);
+            throw new IllegalArgumentException("Chat room not found for chatRoomId: " + id);
         }
     }
 

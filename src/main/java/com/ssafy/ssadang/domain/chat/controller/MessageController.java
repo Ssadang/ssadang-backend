@@ -47,15 +47,10 @@ public class MessageController {
     }
     // 채팅방 생성 또는 기존 방 확인 후 ID 반환
     @PostMapping("/api/v1/chat/room")
-    public ResponseEntity<Integer> createOrFindChatRoom(@RequestBody LastMessageRequestDto requestDto, @RequestParam Integer loginUserId) {
-        Optional<LastMessage> existingRoom = lastMessageService.findLastMessageByChatRoomId(requestDto.getChatRoomId());
+    public ResponseEntity<String> createOrFindChatRoom(@RequestBody LastMessageRequestDto requestDto, @RequestParam Integer loginUserId) {
+        String chatRoomId = lastMessageService.createOrFindChatRoom(requestDto , loginUserId);
+        return ResponseEntity.ok(chatRoomId);
 
-        if (existingRoom.isPresent()) {
-            return ResponseEntity.ok(existingRoom.get().getChatRoomId());
-        } else {
-            lastMessageService.saveLastMessage(requestDto, loginUserId);
-            return ResponseEntity.ok(requestDto.getChatRoomId());
-        }
     }
 
     //유저별 채팅방리스트 조회
@@ -69,9 +64,9 @@ public class MessageController {
 
     // 채팅방 나가기
     @DeleteMapping("/api/v1/chat/{chatRoomId}/leave")
-    public ResponseEntity<Void> leaveChatRoom(@PathVariable Integer chatRoomId, @RequestParam Integer userId) {
+    public ResponseEntity<Void> leaveChatRoom(@PathVariable String id, @RequestParam Integer userId) {
         try {
-            lastMessageService.leaveChatRoom(chatRoomId, userId);
+            lastMessageService.leaveChatRoom(id, userId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

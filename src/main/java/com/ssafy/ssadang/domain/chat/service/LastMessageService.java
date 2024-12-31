@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LastMessageService {
-    Optional<LastMessage> findLastMessageByChatRoomId(Integer chatRoomId);
-
-    void saveLastMessage(LastMessageRequestDto requestDto, Integer loginUserId);
+    String createOrFindChatRoom(LastMessageRequestDto requestDto, Integer loginUserId);
     List<LastMessage> findChatRoomsByUserId(Integer userId);
-    void leaveChatRoom(Integer chatRoomId, Integer userId);
+    void leaveChatRoom(String id, Integer userId);
 }

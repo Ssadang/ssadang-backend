@@ -9,7 +9,6 @@ import java.util.Set;
 @Data
 @Builder
 public class LastMessageResponseDto {
-    private Integer chatRoomId;
     private String content;
     private LocalDateTime createDate;
     private Set<Integer> senderIds;
