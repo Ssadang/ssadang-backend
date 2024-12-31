@@ -34,7 +34,7 @@ public class MessageController {
     //웹소켓 메시지 전송
     @MessageMapping("/chat/{chatRoomId}")
     @SendTo("/subscribe/chat/{chatRoomId}")
-    public ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, @DestinationVariable Integer chatRoomId) {
+    public ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, @DestinationVariable String chatRoomId) {
         log.info("Message received in chat room {}: {}", chatRoomId, request);
         chatMessageService.sendMessage(request, chatRoomId);
         return new ChatMessageResponseDto(request.sender(), request.content(), LocalDateTime.now());
@@ -42,7 +42,7 @@ public class MessageController {
 
     //채팅방당 메시지 불러오기
     @GetMapping("/api/v1/chat/{chatRoomId}/messages")
-    public List<ChatMessage> getMessages(@PathVariable Integer chatRoomId) {
+    public List<ChatMessage> getMessages(@PathVariable String chatRoomId) {
         return chatMessageService.getChatMessagesByChatRoomId(chatRoomId);
     }
     // 채팅방 생성 또는 기존 방 확인 후 ID 반환

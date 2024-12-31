@@ -69,5 +69,19 @@ public class LastMessageServiceImpl implements LastMessageService {
         }
     }
 
+    @Override
+    public void updateLastMessage(String chatRoomId, String content, LocalDateTime createDate) {
+        Optional<LastMessage> lastMessageOptional = lastMessageRepository.findById(chatRoomId);
+        if(lastMessageOptional.isPresent()) {
+            LastMessage lastMessage = lastMessageOptional.get();
+            lastMessage.setContent(content);
+            lastMessage.setCreateDate(createDate);
+            lastMessageRepository.save(lastMessage);
+        }else {
+            throw new IllegalArgumentException("채팅방을 찾을 수 없습니다." + chatRoomId);
+        }
+
+    }
+
 
 }

@@ -17,11 +17,11 @@ public class ChatMessage {
     private Integer sender;
     private String content;
     private LocalDateTime createDate;
-    private Integer chatRoomId;
+    private String chatRoomId;
     private boolean isRead;
 
     @Builder
-    public ChatMessage(Integer sender, String content, LocalDateTime createDate, Integer chatRoomId, boolean isRead) {
+    public ChatMessage(Integer sender, String content, LocalDateTime createDate, String chatRoomId, boolean isRead) {
         this.sender = sender;
         this.content = content;
         this.createDate = createDate;

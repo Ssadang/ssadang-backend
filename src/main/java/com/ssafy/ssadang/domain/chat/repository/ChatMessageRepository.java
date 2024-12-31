@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
-    List<ChatMessage> findByChatRoomId(Integer chatRoomId);
+    List<ChatMessage> findByChatRoomId(String chatRoomId);
 }
