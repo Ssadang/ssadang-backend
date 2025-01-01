@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
-import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardResponseDto;
+import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDetailResponseDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.service.SaleBoardService;
 
 import jakarta.validation.Valid;
@@ -30,11 +31,11 @@ public class SaleBoardController {
 	private final SaleBoardService saleBoardService;
 
 	@PostMapping
-	public ResponseEntity<?> upload(@AuthenticationPrincipal Object authorPrincipal,
+	public ResponseEntity<?> upload(@AuthenticationPrincipal Object author,
 			@Valid @ModelAttribute SaleBoardRequestDto saleBoardRequestDto) {
 		// 로그인 구현 전까지 임시로 authorId 1 사용
 		Integer authorId = 1;
-		SaleBoardResponseDto saleBoardResponseDto = saleBoardService.upload(authorId, saleBoardRequestDto);
+		SaleBoardDetailResponseDto saleBoardResponseDto = saleBoardService.upload(authorId, saleBoardRequestDto);
 		return ResponseEntity
 				.created(URI.create(
 						contextPath + "/api/v1/sale-board/" + saleBoardResponseDto.getSaleBoard().getSaleBoardId()))
@@ -42,10 +43,18 @@ public class SaleBoardController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> view(@AuthenticationPrincipal Object loginUserPrincipal,
+	public ResponseEntity<?> view(@AuthenticationPrincipal Object loginUser,
 			@PathVariable Integer id) {
 		Integer loginUserId = 1;
 		return ResponseEntity.ok(saleBoardService.view(loginUserId, id));
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> list(@AuthenticationPrincipal Object loginUser,
+			@RequestParam(required = false) String keyword,
+			@RequestParam(required = false) Integer cursorId) {
+		Integer loginUserId = 1;
+		return ResponseEntity.ok(saleBoardService.list(loginUserId, keyword, cursorId));
 	}
 
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class SaleBoardResponseDto {
+public class SaleBoardDetailResponseDto {
 	
 	private SaleBoardDto saleBoard;
 	private List<SaleBoardDto> sameAuthorSaleBoards;

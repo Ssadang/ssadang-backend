@@ -5,17 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDetailResponseDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
-import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardResponseDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleBoard;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleFavorite;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleImage;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardRepository;
+import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardSpecification;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleFavoriteRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleImageRepository;
 import com.ssafy.ssadang.domain.user.dto.UserDto;
@@ -28,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 public class SaleBoardServiceImpl implements SaleBoardService {
+	
+	private final int DEFAULT_PAGE_SIZE = 20;
 
 	private final AmazonS3Uploader amazonS3Uploader;
 	
@@ -38,7 +46,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	private final SaleFavoriteRepository saleFavoriteRepository;
 	
 	@Override
-	public SaleBoardResponseDto upload(Integer authorId, SaleBoardRequestDto saleBoardRequestDto) {
+	public SaleBoardDetailResponseDto upload(Integer authorId, SaleBoardRequestDto saleBoardRequestDto) {
 		UserDto authorDto = userService.findDtoById(authorId);
 		SaleBoard saleBoard = SaleBoard.builder()
 				.authorId(authorDto.getUserId())
@@ -53,7 +61,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				.build();
 		SaleBoard savedSaleBoard = saleBoardRepository.save(saleBoard);
 		saveImages(savedSaleBoard.getSaleBoardId(), saleBoardRequestDto.getImages());
-		return toSaleBoardResponseDto(savedSaleBoard, authorDto);
+		return toSaleBoardDetailDto(savedSaleBoard, authorDto);
 	}
 	
 	@Override
@@ -73,10 +81,37 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	}
 	
 	@Override
-	public SaleBoardResponseDto view(Integer loginUserId, Integer saleBoardid) {
+	public SaleBoardDetailResponseDto view(Integer loginUserId, Integer saleBoardid) {
 		SaleBoard saleBoard = saleBoardRepository.findById(saleBoardid).orElseThrow();
 		saleBoard.setHitCount(saleBoard.getHitCount() + 1);
-		return toSaleBoardResponseDto(saleBoard, userService.findDtoById(loginUserId));
+		return toSaleBoardDetailDto(saleBoard, userService.findDtoById(loginUserId));
+	}
+	
+	@Override
+	public List<SaleBoardDto> list(Integer loginUserId, String keyword, Integer cursorId) {
+		Pageable pageable = PageRequest.of(0, DEFAULT_PAGE_SIZE, Sort.by("createDate").descending());
+		Page<SaleBoard> page = null;
+		if (keyword == null || keyword.isBlank()) {
+			if (cursorId == null) {
+				page = saleBoardRepository.findAll(pageable);
+			} else {
+				SaleBoard cursor = saleBoardRepository.findById(cursorId).orElseThrow();
+				page = saleBoardRepository
+						.findAllByCreateDateLessThan(cursor.getCreateDate(), pageable);
+			}
+		} else {
+			String[] keywords = keyword.split(" ");
+			Specification<SaleBoard> specification = null;
+			if (cursorId == null) {
+				specification = SaleBoardSpecification.hasAllKeywordsIn(keywords);
+			} else {
+				SaleBoard cursor = saleBoardRepository.findById(cursorId).orElseThrow();
+				specification = SaleBoardSpecification
+						.isCreateDateLessThanAndHasAllKeywordsIn(cursor.getCreateDate(), keywords);
+			}
+			page = saleBoardRepository.findAll(specification, pageable);
+		}
+		return page.stream().map(saleBoard -> toSaleBoardDto(saleBoard, loginUserId)).toList();
 	}
 	
 	private void saveImages(Integer saleBoardId, List<MultipartFile> images) {
@@ -109,7 +144,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				favorite);
 	}
 	
-	private SaleBoardResponseDto toSaleBoardResponseDto(SaleBoard saleBoard, UserDto loginUserDto) {
+	private SaleBoardDetailResponseDto toSaleBoardDetailDto(SaleBoard saleBoard, UserDto loginUserDto) {
 		SaleBoardDto saleBoardDto = toSaleBoardDto(saleBoard, loginUserDto.getUserId());
 		List<SaleBoardDto> sameAuthorSaleBoardDtos = findAllDtoByAuthorId(saleBoard.getAuthorId(),
 				loginUserDto.getUserId()).stream()
@@ -119,7 +154,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				loginUserDto.getUserId()).stream()
 				.filter(dto -> !dto.getSaleBoardId().equals(saleBoard.getSaleBoardId()))
 				.toList();
-		return new SaleBoardResponseDto(saleBoardDto, sameAuthorSaleBoardDtos, similarSaleBoardDtos);
+		return new SaleBoardDetailResponseDto(saleBoardDto, sameAuthorSaleBoardDtos, similarSaleBoardDtos);
 	}
 
 }

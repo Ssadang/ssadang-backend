@@ -39,7 +39,6 @@ public class SaleBoard {
 	private Integer itemCategoryId;
 	@NotNull
 	private Integer areaId;
-	private Integer boardStatusId;
 	private Integer gifticonId;
 	@NotNull
 	private Integer hitCount;
