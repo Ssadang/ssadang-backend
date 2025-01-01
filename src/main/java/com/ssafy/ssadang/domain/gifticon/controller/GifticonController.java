@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ssadang.domain.gifticon.dto.GifticonRequestDto;
@@ -54,7 +55,7 @@ public class GifticonController {
 	@GetMapping("/expired")
 	public ResponseEntity<?> findAllExpired(
 			@AuthenticationPrincipal Object owner,
-			Integer cursorId) {
+			@RequestParam(required = false) Integer cursorId) {
 		Integer ownerId = 1;
 		return ResponseEntity.ok(gifticonService.findExpiredPage(ownerId, cursorId));
 	}
@@ -62,7 +63,7 @@ public class GifticonController {
 	@GetMapping("/unexpired")
 	public ResponseEntity<?> findAllUnexpired(
 			@AuthenticationPrincipal Object owner,
-			Integer cursorId) {
+			@RequestParam(required = false) Integer cursorId) {
 		Integer ownerId = 1;
 		return ResponseEntity.ok(gifticonService.findUnexpiredPage(ownerId, cursorId));
 	}
