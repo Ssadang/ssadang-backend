@@ -22,5 +22,9 @@ public interface SaleBoardService {
 	void deleteById(Integer loginUserId, Integer saleBoardId);
 	
 	void setStatusById(Integer loginUserId, Integer saleBoardId, Map<String, Integer> status);
+	
+	void addFavorite(Integer loginUserId, Integer saleBoardId);
+	
+	void deleteFavorite(Integer loginUserId, Integer saleBoardId);
 
 }

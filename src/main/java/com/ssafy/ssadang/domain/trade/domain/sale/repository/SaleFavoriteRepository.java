@@ -9,5 +9,7 @@ import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleFavorite;
 public interface SaleFavoriteRepository extends JpaRepository<SaleFavorite, Integer> {
 	
 	Set<SaleFavorite> findAllBySaleBoardId(Integer saleBoardId);
+	
+	void deleteBySaleBoardIdAndUserId(Integer saleBoardId, Integer userId);
 
 }
