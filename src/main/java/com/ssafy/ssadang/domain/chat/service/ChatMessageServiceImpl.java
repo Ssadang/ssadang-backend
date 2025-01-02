@@ -7,6 +7,8 @@ import com.ssafy.ssadang.domain.chat.dto.ChatMessageResponseDto;
 import com.ssafy.ssadang.domain.chat.repository.ChatMessageRepository;
 import com.ssafy.ssadang.domain.chat.repository.LastMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -61,8 +63,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public List<ChatMessage> getChatMessagesByChatRoomId(String chatRoomId, Integer userId) {
-        List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId);
+    public Page<ChatMessage> getChatMessagesByChatRoomId(String chatRoomId, Integer userId, Pageable pageable) {
+        Page<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId, pageable);
 
         Optional<LastMessage> lastMessageOptional = lastMessageRepository.findById(chatRoomId);
         if (lastMessageOptional.isPresent()) {
@@ -77,6 +79,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
         return messages;
     }
+
 
 
 }
