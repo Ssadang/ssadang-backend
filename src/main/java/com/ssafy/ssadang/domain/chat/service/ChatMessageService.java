@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ChatMessageService {
     ChatMessageResponseDto sendMessage(ChatMessageRequestDto request, String chatRoomId);
-    List<ChatMessage> getChatMessagesByChatRoomId(String chatRoomId);
+    List<ChatMessage> getChatMessagesByChatRoomId(String chatRoomId, Integer userId);
 
 }

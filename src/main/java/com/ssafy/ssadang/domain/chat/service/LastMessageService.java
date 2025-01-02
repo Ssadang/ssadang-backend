@@ -11,5 +11,4 @@ public interface LastMessageService {
     String createOrFindChatRoom(LastMessageRequestDto requestDto, Integer loginUserId);
     List<LastMessage> findChatRoomsByUserId(Integer userId);
     void leaveChatRoom(String id, Integer userId);
-    void updateLastMessage(String chatRoomId, String content, LocalDateTime createDate);
 }
