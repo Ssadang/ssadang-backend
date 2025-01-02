@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDetailResponseDto;
+import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.service.SaleBoardService;
 
 import jakarta.validation.Valid;
@@ -74,6 +74,22 @@ public class SaleBoardController {
 			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
 		Integer loginUserId = 1;
 		saleBoardService.setStatusById(loginUserId, id, status);
+		return ResponseEntity.ok(null);
+	}
+	
+	@PostMapping("/{id}/favorite")
+	public ResponseEntity<?> addFavorite(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id) {
+		Integer loginUserId = 1;
+		saleBoardService.addFavorite(loginUserId, id);
+		return ResponseEntity.ok(null);
+	}
+	
+	@DeleteMapping("/{id}/favorite")
+	public ResponseEntity<?> deleteFavorite(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id) {
+		Integer loginUserId = 1;
+		saleBoardService.deleteFavorite(loginUserId, id);
 		return ResponseEntity.ok(null);
 	}
 

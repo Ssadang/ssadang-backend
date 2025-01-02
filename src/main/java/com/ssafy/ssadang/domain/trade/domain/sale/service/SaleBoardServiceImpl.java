@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ssadang.domain.gifticon.entity.Gifticon;
-import com.ssafy.ssadang.domain.gifticon.entity.GifticonStatusRelationship;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDetailResponseDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
@@ -202,6 +200,19 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				.boardStatusId(boardStatusId)
 				.build();
 		saleBoardStatusRelationshipRepository.save(saleBoardStatusRelationship);
+	}
+	
+	@Override
+	public void addFavorite(Integer loginUserId, Integer saleBoardId) {
+		saleFavoriteRepository.save(SaleFavorite.builder()
+				.saleBoardId(saleBoardId)
+				.userId(loginUserId)
+				.build());
+	}
+	
+	@Override
+	public void deleteFavorite(Integer loginUserId, Integer saleBoardId) {
+		saleFavoriteRepository.deleteBySaleBoardIdAndUserId(saleBoardId, loginUserId);
 	}
 
 }
