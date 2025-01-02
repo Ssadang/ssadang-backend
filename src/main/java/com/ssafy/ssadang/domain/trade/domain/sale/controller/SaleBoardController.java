@@ -1,14 +1,18 @@
 package com.ssafy.ssadang.domain.trade.domain.sale.controller;
 
 import java.net.URI;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +59,22 @@ public class SaleBoardController {
 			@RequestParam(required = false) Integer cursorId) {
 		Integer loginUserId = 1;
 		return ResponseEntity.ok(saleBoardService.list(loginUserId, keyword, cursorId));
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id) {
+		Integer loginUserId = 1;
+		saleBoardService.deleteById(loginUserId, id);
+		return ResponseEntity.ok(null);
+	}
+	
+	@PatchMapping("/{id}")
+	public ResponseEntity<?> setStatusById(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
+		Integer loginUserId = 1;
+		saleBoardService.setStatusById(loginUserId, id, status);
+		return ResponseEntity.ok(null);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.ssafy.ssadang.domain.trade.domain.sale.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -14,14 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.ssadang.domain.gifticon.entity.Gifticon;
+import com.ssafy.ssadang.domain.gifticon.entity.GifticonStatusRelationship;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDetailResponseDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleBoard;
+import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleBoardStatusRelationship;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleFavorite;
 import com.ssafy.ssadang.domain.trade.domain.sale.entity.SaleImage;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardSpecification;
+import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardStatusRelationshipRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleFavoriteRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleImageRepository;
 import com.ssafy.ssadang.domain.user.dto.UserDto;
@@ -44,6 +49,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	private final SaleBoardRepository saleBoardRepository;
 	private final SaleImageRepository saleImageRepository;
 	private final SaleFavoriteRepository saleFavoriteRepository;
+	private final SaleBoardStatusRelationshipRepository saleBoardStatusRelationshipRepository;
 	
 	@Override
 	public SaleBoardDetailResponseDto upload(Integer authorId, SaleBoardRequestDto saleBoardRequestDto) {
@@ -155,6 +161,47 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 				.filter(dto -> !dto.getSaleBoardId().equals(saleBoard.getSaleBoardId()))
 				.toList();
 		return new SaleBoardDetailResponseDto(saleBoardDto, sameAuthorSaleBoardDtos, similarSaleBoardDtos);
+	}
+	
+	@Override
+	public void deleteById(Integer loginUserId, Integer saleBoardId) {
+		SaleBoard saleBoard = saleBoardRepository.findById(saleBoardId).orElseThrow();
+		addStatus(saleBoard, 1);
+	}
+	
+	@Override
+	public void setStatusById(Integer loginUserId, Integer saleBoardId, Map<String, Integer> status) {
+		SaleBoard saleBoard = saleBoardRepository.findById(saleBoardId).orElseThrow();
+		switch (status.get("status")) {
+		case 2: // USED
+			close(saleBoard);
+			break;
+		}
+	}
+	
+	private void close(SaleBoard saleBoard) {
+		if (hasStatus(saleBoard, 1)) {
+			throw new IllegalArgumentException("Gifticon alreaady has been deleted");
+		}
+		addStatus(saleBoard, 2);
+	}
+	
+	private boolean hasStatus(SaleBoard saleBoard, Integer boardStatusId) {
+		return saleBoardStatusRelationshipRepository.findAllBySaleBoardId(saleBoard.getGifticonId()).stream()
+				.anyMatch(gifticonStatusRelationship -> gifticonStatusRelationship.getBoardStatusId()
+						.equals(boardStatusId));
+	}
+	
+	private void addStatus(SaleBoard saleBoard, Integer boardStatusId) {
+		boolean statusPresent = hasStatus(saleBoard, boardStatusId);
+		if (statusPresent) {
+			throw new IllegalArgumentException("Gifticon already has the status: " + boardStatusId);
+		}
+		SaleBoardStatusRelationship saleBoardStatusRelationship = SaleBoardStatusRelationship.builder()
+				.saleBoardId(saleBoard.getGifticonId())
+				.boardStatusId(boardStatusId)
+				.build();
+		saleBoardStatusRelationshipRepository.save(saleBoardStatusRelationship);
 	}
 
 }

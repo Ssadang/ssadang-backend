@@ -1,6 +1,7 @@
 package com.ssafy.ssadang.domain.trade.domain.sale.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardDto;
 import com.ssafy.ssadang.domain.trade.domain.sale.dto.SaleBoardRequestDto;
@@ -17,5 +18,9 @@ public interface SaleBoardService {
 	SaleBoardDetailResponseDto view(Integer loginUserId, Integer saleBoardid);
 
 	List<SaleBoardDto> list(Integer loginUserId, String keyword, Integer cursorId);
+	
+	void deleteById(Integer loginUserId, Integer saleBoardId);
+	
+	void setStatusById(Integer loginUserId, Integer saleBoardId, Map<String, Integer> status);
 
 }
