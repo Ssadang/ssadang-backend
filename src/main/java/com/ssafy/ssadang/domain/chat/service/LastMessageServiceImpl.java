@@ -8,10 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +33,7 @@ public class LastMessageServiceImpl implements LastMessageService {
                     .chatType(requestDto.getChatType())
                     .saleBoardId(requestDto.getSaleBoardId())
                     .shareBoardId(requestDto.getShareBoardId())
-                    .unReadCount(0)
+                    .unReadCounts(null)
                     .build();
 
             LastMessage savedMessage = lastMessageRepository.save(newLastMessage);
@@ -51,7 +48,16 @@ public class LastMessageServiceImpl implements LastMessageService {
             lastMessageRepository.deleteAll(emptyChatRooms);
             System.out.println("빈채팅방 처리 " + emptyChatRooms.size());
         }
-        return lastMessageRepository.findBySenderIdsContaining(userId, Sort.by(Sort.Direction.DESC, "createDate"));
+        List<LastMessage> chatRooms = lastMessageRepository.findBySenderIdsContaining(userId, Sort.by(Sort.Direction.DESC, "createDate"));
+        for (LastMessage chatRoom : chatRooms) {
+            Map<Integer, Integer> unReadCounts = chatRoom.getUnReadCounts();
+            if (unReadCounts != null && unReadCounts.containsKey(userId)) {
+                chatRoom.setUnReadCounts(Map.of(userId, unReadCounts.get(userId)));
+            } else {
+                chatRoom.setUnReadCounts(Map.of(userId, 0));
+            }
+        }
+        return chatRooms;
     }
 
     @Override
@@ -75,19 +81,7 @@ public class LastMessageServiceImpl implements LastMessageService {
         }
     }
 
-    @Override
-    public void updateLastMessage(String chatRoomId, String content, LocalDateTime createDate) {
-        Optional<LastMessage> lastMessageOptional = lastMessageRepository.findById(chatRoomId);
-        if(lastMessageOptional.isPresent()) {
-            LastMessage lastMessage = lastMessageOptional.get();
-            lastMessage.setContent(content);
-            lastMessage.setCreateDate(createDate);
-            lastMessageRepository.save(lastMessage);
-        }else {
-            throw new IllegalArgumentException("채팅방을 찾을 수 없습니다." + chatRoomId);
-        }
 
-    }
 
 
 }

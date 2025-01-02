@@ -42,13 +42,13 @@ public class MessageController {
 
     //채팅방당 메시지 불러오기
     @GetMapping("/api/v1/chat/{chatRoomId}/messages")
-    public List<ChatMessage> getMessages(@PathVariable String chatRoomId) {
-        return chatMessageService.getChatMessagesByChatRoomId(chatRoomId);
+    public List<ChatMessage> getMessages(@PathVariable String chatRoomId, @RequestParam Integer userId) {
+        return chatMessageService.getChatMessagesByChatRoomId(chatRoomId, userId);
     }
     // 채팅방 생성 또는 기존 방 확인 후 ID 반환
     @PostMapping("/api/v1/chat/room")
-    public ResponseEntity<String> createOrFindChatRoom(@RequestBody LastMessageRequestDto requestDto, @RequestParam Integer loginUserId) {
-        String chatRoomId = lastMessageService.createOrFindChatRoom(requestDto , loginUserId);
+    public ResponseEntity<String> createOrFindChatRoom(@RequestBody LastMessageRequestDto requestDto, @RequestParam Integer userId) {
+        String chatRoomId = lastMessageService.createOrFindChatRoom(requestDto , userId);
         return ResponseEntity.ok(chatRoomId);
 
     }
