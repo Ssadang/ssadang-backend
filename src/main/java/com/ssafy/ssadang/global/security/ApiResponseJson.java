@@ -1,0 +1,30 @@
+package com.ssafy.ssadang.global.security;
+
+import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+// custom 응답 객체
+@Getter
+@ToString
+@NoArgsConstructor
+public class ApiResponseJson {
+    public HttpStatus httpStatus;
+    public int code;
+    public Object data;
+
+    public ApiResponseJson(HttpStatus httpStatus, int code, Object data) {
+        this.httpStatus = httpStatus;
+        this.code = code;
+        this.data = data;
+    }
+
+    public ApiResponseJson(HttpStatus httpStatus, Object data) {
+        this.httpStatus = httpStatus;
+        this.code = ResponseStatusCode.OK;
+        this.data = data;
+    }
+}
+
