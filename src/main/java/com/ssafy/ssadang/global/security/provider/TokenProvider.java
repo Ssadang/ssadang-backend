@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.security.provider;
 
 
 import java.security.Key;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +16,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ssafy.ssadang.domain.user.entity.RoleRegister;
 import com.ssafy.ssadang.domain.user.entity.User;
-import com.ssafy.ssadang.domain.user.service.UserService;
+import com.ssafy.ssadang.global.security.TokenStatus;
+import com.ssafy.ssadang.global.security.TokenType;
+import com.ssafy.ssadang.global.security.TokenValidationResult;
+import com.ssafy.ssadang.global.security.UserPrinciple;
+import com.ssafy.ssadang.global.security.dto.AccessTokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.RefreshTokenInfoResponseDto;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -35,19 +39,44 @@ public class TokenProvider {
 	private static final String AUTHORITIES_KEY = "auth"; // payload에 auth : role 이런씩
 	private static final String TOKEN_ID_KEY = "tokenId"; // payload에 tokenId : 해쉬값
 	private static final String USERNAME_KEY = "username"; // payload에 username : user 이름
+	private static final String USERID_KEY = "userId";
 	
 	private final Key hashKey; // 서명 알고리즘에 쓰이는 key 값
 	private final long accessTokenValidationInMilliseconds; // token 유효기간d
+	private final long refreshTokenValidationInMilliseconds;
 	
-	public TokenProvider(String secrete, long accessTokenValidationInMilliseconds) {
+	public TokenProvider(String secrete, long accessTokenValidationInMilliseconds, long refreshTokenValidationInMilliseconds) {
 		byte[] keyBytes = Decoders.BASE64.decode(secrete); // base64로 인코딩된 secrete key를 decoder로 decoding 하고 keyBytes에 저장후
 		this.hashKey = Keys.hmacShaKeyFor(keyBytes);// 이걸 이용하려면 Key 객체로 wrapping 해야한다.
 		this.accessTokenValidationInMilliseconds = accessTokenValidationInMilliseconds * 1000;
+		this.refreshTokenValidationInMilliseconds = refreshTokenValidationInMilliseconds * 1000;
 	}
-	
 	// 토큰 발급 로직
-	// 로그인시
-	public TokenInfoResponseDto createToken(User user) {
+	// RefreshToken
+	public RefreshTokenInfoResponseDto createRefreshToken(User user) {
+		long currentTime = new Date().getTime(); // 현재 시간
+		Date refreshTokenExpireTime = new Date(currentTime + refreshTokenValidationInMilliseconds);
+		String tokenId = UUID.randomUUID().toString();
+		
+		String refreshToken = Jwts.builder()
+				.setSubject(user.getEmail())
+				.claim(TOKEN_ID_KEY, tokenId)
+				.signWith(hashKey, SignatureAlgorithm.HS512)
+				.setExpiration(refreshTokenExpireTime)
+				.compact();
+		
+		return RefreshTokenInfoResponseDto.builder()
+				.refreshToken(refreshToken)
+				.refreshTokenExpireTime(refreshTokenExpireTime)
+				.email(user.getEmail())
+				.tokenId(tokenId)
+				.build();
+				
+		
+	}
+//	public RefreshTokenInfoResponseDto 
+	// AccessToken
+	public AccessTokenInfoResponseDto createAccessToken(User user) {
 		long currentTime = new Date().getTime(); // 현재 시간
 		Date accessTokenExpireTime = new Date(currentTime + accessTokenValidationInMilliseconds); // 현재 시간 + 만료기간
 		String tokenId = UUID.randomUUID().toString(); // tokenId 발급
@@ -76,7 +105,7 @@ public class TokenProvider {
 				.setExpiration(accessTokenExpireTime)
 				.compact();
 		
-		return TokenInfoResponseDto.builder()
+		return AccessTokenInfoResponseDto.builder()
 				.accessToken(accessToken)
 				.email(user.getEmail())
 				.accessTokenExpireTime(accessTokenExpireTime)

@@ -16,8 +16,10 @@ import com.ssafy.ssadang.domain.user.entity.User;
 import com.ssafy.ssadang.domain.user.repository.RoleRegisterRepository;
 import com.ssafy.ssadang.domain.user.repository.RoleRepository;
 import com.ssafy.ssadang.domain.user.repository.UserRepository;
-import com.ssafy.ssadang.global.security.TokenInfoResponseDto;
-import com.ssafy.ssadang.global.security.TokenProvider;
+import com.ssafy.ssadang.global.security.dto.AccessTokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.RefreshTokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.TokenResponseDto;
+import com.ssafy.ssadang.global.security.provider.TokenProvider;
 import com.ssafy.ssadang.global.util.RandomStringGenerator;
 import com.ssafy.ssadang.global.util.RedisUtils;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
@@ -144,13 +146,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenInfoResponseDto login(String email, String password) {
+	public TokenResponseDto login(String email, String password) {
 		try {
 			// user를 찾아야댐
 			User user = findByEmail(email);
 			User detailUser = findUserWithRoleNameById(user.getUserId());
 			checkPassword(password, detailUser);
-			return tokenProvider.createToken(detailUser); // 토큰 반환
+			
+			AccessTokenInfoResponseDto accessTokenInfoResponseDto = tokenProvider.createAccessToken(detailUser);
+			RefreshTokenInfoResponseDto refreshTokenInfoResponseDto = tokenProvider.createRefreshToken(detailUser);
+			
+			TokenResponseDto tokenResponseDto = new TokenResponseDto();
+			tokenResponseDto.setAccessTokenInfoResponse(accessTokenInfoResponseDto);
+			tokenResponseDto.setRefreshTokenInfoResponse(refreshTokenInfoResponseDto);
+			
+			return tokenResponseDto;
+			
+			//refresh 토큰과 access token 두개를 발급한다.
+		
 		} catch (IllegalArgumentException | BadCredentialsException e) {
 			throw new IllegalArgumentException("계정이 존재하지 않거나 비밀번호가 잘못되었습니다.");
 		}

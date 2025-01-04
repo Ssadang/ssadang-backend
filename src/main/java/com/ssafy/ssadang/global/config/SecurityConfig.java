@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtFilter jwtFilter;
-    private final String[] adminUrl = {"/admin/**", "/user/**", "/api/v1/gifticon/**"};
+    private final String[] adminUrl = {"/admin/**"};
     private final String[] permitAllUrl = {"/error", "/user/login", "/user/signup"};
     private final String[] temporaryUrl = {"/user/test"};
 

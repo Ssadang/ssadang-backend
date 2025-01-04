@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.security.dto;
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString(exclude= {"accessToken"})
-public class TokenInfoResponseDto {
+public class AccessTokenInfoResponseDto {
 	private String accessToken; // access token
 	
 	private Date accessTokenExpireTime; // 토큰의 만료날

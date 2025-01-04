@@ -16,7 +16,7 @@ import com.ssafy.ssadang.domain.user.dto.request.LoginRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.SignupRequestDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.global.security.ApiResponseJson;
-import com.ssafy.ssadang.global.security.TokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.TokenResponseDto;
 
 @RestController
 @RequestMapping("/user")
@@ -41,8 +41,8 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public ApiResponseJson login(@RequestBody LoginRequestDto dto){
-		TokenInfoResponseDto tokenInfoResponseDto = service.login(dto.getEmail(), dto.getPassword());
-		return new ApiResponseJson(HttpStatus.OK, tokenInfoResponseDto);
+		TokenResponseDto tokenResponseDto = service.login(dto.getEmail(), dto.getPassword());
+		return new ApiResponseJson(HttpStatus.OK, tokenResponseDto);
 	}
 	
 	@GetMapping("/test")
