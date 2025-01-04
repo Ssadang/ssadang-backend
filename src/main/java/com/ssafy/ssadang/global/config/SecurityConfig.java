@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.ssafy.ssadang.global.security.JwtAccessDeniedHandler;
 import com.ssafy.ssadang.global.security.JwtAuthenticationEntryPoint;
-import com.ssafy.ssadang.global.security.JwtFilter;
+import com.ssafy.ssadang.global.security.filter.JwtFilter;
 
 import lombok.RequiredArgsConstructor;
 

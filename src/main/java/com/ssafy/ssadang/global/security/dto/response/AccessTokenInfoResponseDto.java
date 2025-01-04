@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security.dto;
+package com.ssafy.ssadang.global.security.dto.response;
 
 import java.util.Date;
 

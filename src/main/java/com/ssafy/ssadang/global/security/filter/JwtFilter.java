@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.security.filter;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ssafy.ssadang.global.security.TokenStatus;
+import com.ssafy.ssadang.global.security.TokenValidationResult;
 import com.ssafy.ssadang.global.security.provider.TokenProvider;
 
 import jakarta.servlet.FilterChain;

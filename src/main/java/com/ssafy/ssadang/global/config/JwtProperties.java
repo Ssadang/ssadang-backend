@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

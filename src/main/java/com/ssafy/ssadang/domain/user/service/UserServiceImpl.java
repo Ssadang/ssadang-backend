@@ -16,9 +16,9 @@ import com.ssafy.ssadang.domain.user.entity.User;
 import com.ssafy.ssadang.domain.user.repository.RoleRegisterRepository;
 import com.ssafy.ssadang.domain.user.repository.RoleRepository;
 import com.ssafy.ssadang.domain.user.repository.UserRepository;
-import com.ssafy.ssadang.global.security.dto.AccessTokenInfoResponseDto;
-import com.ssafy.ssadang.global.security.dto.RefreshTokenInfoResponseDto;
-import com.ssafy.ssadang.global.security.dto.TokenResponseDto;
+import com.ssafy.ssadang.global.error.exception.NullRefreshTokenException;
+import com.ssafy.ssadang.global.security.dto.response.AccessTokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.response.TokenResponseDto;
 import com.ssafy.ssadang.global.security.provider.TokenProvider;
 import com.ssafy.ssadang.global.util.RandomStringGenerator;
 import com.ssafy.ssadang.global.util.RedisUtils;
@@ -154,11 +154,10 @@ public class UserServiceImpl implements UserService {
 			checkPassword(password, detailUser);
 			
 			AccessTokenInfoResponseDto accessTokenInfoResponseDto = tokenProvider.createAccessToken(detailUser);
-			RefreshTokenInfoResponseDto refreshTokenInfoResponseDto = tokenProvider.createRefreshToken(detailUser);
 			
 			TokenResponseDto tokenResponseDto = new TokenResponseDto();
 			tokenResponseDto.setAccessTokenInfoResponse(accessTokenInfoResponseDto);
-			tokenResponseDto.setRefreshTokenInfoResponse(refreshTokenInfoResponseDto);
+			tokenResponseDto.setRefreshTokenInfoResponse(tokenProvider.createRefreshToken(detailUser));
 			
 			return tokenResponseDto;
 			
@@ -168,6 +167,16 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("계정이 존재하지 않거나 비밀번호가 잘못되었습니다.");
 		}
 
+	}
+
+	@Override
+	public TokenResponseDto reissue(String refreshToken) {
+		if(refreshToken == null) {
+			throw new NullRefreshTokenException();
+		}
+		// redis에 refresh 토큰이 존재한다면
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

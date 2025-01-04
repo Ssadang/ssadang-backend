@@ -20,8 +20,7 @@ import com.ssafy.ssadang.global.security.TokenStatus;
 import com.ssafy.ssadang.global.security.TokenType;
 import com.ssafy.ssadang.global.security.TokenValidationResult;
 import com.ssafy.ssadang.global.security.UserPrinciple;
-import com.ssafy.ssadang.global.security.dto.AccessTokenInfoResponseDto;
-import com.ssafy.ssadang.global.security.dto.RefreshTokenInfoResponseDto;
+import com.ssafy.ssadang.global.security.dto.response.AccessTokenInfoResponseDto;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -53,7 +52,7 @@ public class TokenProvider {
 	}
 	// 토큰 발급 로직
 	// RefreshToken
-	public RefreshTokenInfoResponseDto createRefreshToken(User user) {
+	public String createRefreshToken(User user) {
 		long currentTime = new Date().getTime(); // 현재 시간
 		Date refreshTokenExpireTime = new Date(currentTime + refreshTokenValidationInMilliseconds);
 		String tokenId = UUID.randomUUID().toString();
@@ -64,14 +63,7 @@ public class TokenProvider {
 				.signWith(hashKey, SignatureAlgorithm.HS512)
 				.setExpiration(refreshTokenExpireTime)
 				.compact();
-		
-		return RefreshTokenInfoResponseDto.builder()
-				.refreshToken(refreshToken)
-				.refreshTokenExpireTime(refreshTokenExpireTime)
-				.email(user.getEmail())
-				.tokenId(tokenId)
-				.build();
-				
+		return refreshToken;
 		
 	}
 //	public RefreshTokenInfoResponseDto 

@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.common;
 
 public class ResponseStatusCode {
     public static final int OK = 200;

@@ -1,9 +1,9 @@
-package com.ssafy.ssadang.global.security.dto;
+package com.ssafy.ssadang.global.security.dto.response;
 
 import lombok.Data;
 
 @Data
 public class TokenResponseDto {
 	private AccessTokenInfoResponseDto accessTokenInfoResponse;
-	private RefreshTokenInfoResponseDto refreshTokenInfoResponse;
+	private String refreshTokenInfoResponse;
 }

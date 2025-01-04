@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.common;
 
 import org.springframework.http.HttpStatus;
 

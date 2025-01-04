@@ -1,9 +1,11 @@
-package com.ssafy.ssadang.global.security;
+package com.ssafy.ssadang.global.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.ssafy.ssadang.global.security.JwtAccessDeniedHandler;
+import com.ssafy.ssadang.global.security.JwtAuthenticationEntryPoint;
 import com.ssafy.ssadang.global.security.provider.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
