@@ -28,5 +28,4 @@ public class JwtConfig {
     public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
         return new JwtAccessDeniedHandler();
     }
-
 }

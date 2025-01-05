@@ -17,16 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NullRefreshTokenException.class)
-    public ApiResponseJson handleNullRefreshTokenException(NullRefreshTokenException e) {
-        log.error("Null Refresh Token Exception: {}", e.getMessage());
-        return new ApiResponseJson(
-                HttpStatus.BAD_REQUEST, 
-                ResponseStatusCode.WRONG_PARAMETER,
-                Map.of("errMsg", e.getMessage())
-        );
-    }
 	
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)

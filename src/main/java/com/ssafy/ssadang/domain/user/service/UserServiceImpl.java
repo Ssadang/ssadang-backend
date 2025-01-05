@@ -1,6 +1,9 @@
 package com.ssafy.ssadang.domain.user.service;
 
+import java.security.Key;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,7 +19,6 @@ import com.ssafy.ssadang.domain.user.entity.User;
 import com.ssafy.ssadang.domain.user.repository.RoleRegisterRepository;
 import com.ssafy.ssadang.domain.user.repository.RoleRepository;
 import com.ssafy.ssadang.domain.user.repository.UserRepository;
-import com.ssafy.ssadang.global.error.exception.NullRefreshTokenException;
 import com.ssafy.ssadang.global.security.dto.response.AccessTokenInfoResponseDto;
 import com.ssafy.ssadang.global.security.dto.response.TokenResponseDto;
 import com.ssafy.ssadang.global.security.provider.TokenProvider;
@@ -24,6 +26,10 @@ import com.ssafy.ssadang.global.util.RandomStringGenerator;
 import com.ssafy.ssadang.global.util.RedisUtils;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
 	private final long LIMIT_TIME = 180000; // mail 인증 만료시간
 
+	@Value("${jwt.secret}")
+	private String secret;
 	private final TokenProvider tokenProvider;
 	@Autowired
 	private UserRepository userRepo;
@@ -159,6 +167,8 @@ public class UserServiceImpl implements UserService {
 			tokenResponseDto.setAccessTokenInfoResponse(accessTokenInfoResponseDto);
 			tokenResponseDto.setRefreshTokenInfoResponse(tokenProvider.createRefreshToken(detailUser));
 			
+			// refresh 토큰을 redis에 저장
+			redisUtils.setData(tokenResponseDto.getRefreshTokenInfoResponse(), email, (long)604800 * 1000);
 			return tokenResponseDto;
 			
 			//refresh 토큰과 access token 두개를 발급한다.
@@ -170,13 +180,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenResponseDto reissue(String refreshToken) {
-		if(refreshToken == null) {
-			throw new NullRefreshTokenException();
+	public AccessTokenInfoResponseDto reissue(String refreshToken) {
+		// redis에 refresh 토큰이 존재 하지 않는다면 그냥 검증할 수 없음
+		// 위조, 만료, 전부다 막힘
+		if(redisUtils.getData(refreshToken) == null) {
+			throw new IllegalArgumentException("refresh 토큰이 유효하지 않습니다.");
+		}else {
+			// 토큰 파싱
+			byte[] keyBytes = Decoders.BASE64.decode(secret);
+			Key hashKey = Keys.hmacShaKeyFor(keyBytes);
+			Claims claims = Jwts.parserBuilder().setSigningKey(hashKey).build().parseClaimsJws(refreshToken).getBody();
+			String email = claims.getSubject();
+			User user = findByEmail(email);
+			User detailUser = findUserWithRoleNameById(user.getUserId());
+			
+			// 토큰 재발급
+			AccessTokenInfoResponseDto accessTokenInfoResponseDto = tokenProvider.createAccessToken(detailUser);
+			return accessTokenInfoResponseDto;
 		}
-		// redis에 refresh 토큰이 존재한다면
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

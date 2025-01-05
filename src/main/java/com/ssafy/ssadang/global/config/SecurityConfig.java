@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtFilter jwtFilter;
     private final String[] adminUrl = {"/admin/**"};
-    private final String[] permitAllUrl = {"/error", "/user/login", "/user/signup"};
+    private final String[] permitAllUrl = {"/error", "/user/login", "/user/signup", "/user/reissue"};
     private final String[] temporaryUrl = {"/user/test"};
 
 	// 비밀번호 암호화 메서드

@@ -17,6 +17,7 @@ import com.ssafy.ssadang.domain.user.dto.request.LoginRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.SignupRequestDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.global.common.ApiResponseJson;
+import com.ssafy.ssadang.global.security.dto.response.AccessTokenInfoResponseDto;
 import com.ssafy.ssadang.global.security.dto.response.TokenResponseDto;
 
 import jakarta.servlet.http.Cookie;
@@ -58,6 +59,11 @@ public class UserController {
 		return new ApiResponseJson(HttpStatus.OK, tokenResponseDto.getAccessTokenInfoResponse());
 	}
 	
+	@PostMapping("/reissue")
+	public ApiResponseJson reissue(@CookieValue(value="refresh") String refresh) {
+		AccessTokenInfoResponseDto accessTokenInfoResponseDto = service.reissue(refresh);
+		return new ApiResponseJson(HttpStatus.OK, accessTokenInfoResponseDto);
+	}
 
 	@GetMapping("/test")
 	public String test() {
