@@ -22,11 +22,13 @@ import com.ssafy.ssadang.domain.trade.domain.share.entity.ShareBoard;
 import com.ssafy.ssadang.domain.trade.domain.share.entity.ShareBoardStatusRelationship;
 import com.ssafy.ssadang.domain.trade.domain.share.entity.ShareFavorite;
 import com.ssafy.ssadang.domain.trade.domain.share.entity.ShareImage;
+import com.ssafy.ssadang.domain.trade.domain.share.entity.ShareParticipant;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareBoardRepository;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareBoardSpecification;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareBoardStatusRelationshipRepository;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareFavoriteRepository;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareImageRepository;
+import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareParticipantRepository;
 import com.ssafy.ssadang.domain.user.dto.UserDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
@@ -48,6 +50,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	private final ShareImageRepository shareImageRepository;
 	private final ShareFavoriteRepository shareFavoriteRepository;
 	private final ShareBoardStatusRelationshipRepository shareBoardStatusRelationshipRepository;
+	private final ShareParticipantRepository shareParticipantRepository;
 	
 	@Override
 	public ShareBoardDetailResponseDto upload(Integer authorId, ShareBoardRequestDto shareBoardRequestDto) {
@@ -212,6 +215,32 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	@Override
 	public void deleteFavorite(Integer loginUserId, Integer shareBoardId) {
 		shareFavoriteRepository.deleteByShareBoardIdAndUserId(shareBoardId, loginUserId);
+	}
+	
+	@Override
+	public void participateGame(Integer loginuserId, Integer shareBoardId) {
+		shareParticipantRepository.findByShareBoardIdAndUserId(shareBoardId, loginuserId)
+				.ifPresent(shareParticipant -> {
+					throw new IllegalArgumentException();
+				});
+		shareParticipantRepository.save(
+				ShareParticipant.builder()
+						.shareBoardId(shareBoardId)
+						.userId(loginuserId)
+						.build());
+		Set<ShareParticipant> shareParticipants = shareParticipantRepository.findAllByShareBoardId(shareBoardId);
+		int currentShareParticipantCount = shareParticipants.size();
+		ShareBoard shareBoard = shareBoardRepository.findById(shareBoardId).orElseThrow();
+		if (currentShareParticipantCount == shareBoard.getMaxParticipantCount()) {
+			int winnerIdx = (int) (Math.random() * currentShareParticipantCount);
+			Integer winnerId = shareParticipants.stream().skip(winnerIdx).findFirst().orElseThrow().getUserId();
+			shareBoard.updateWinnerid(winnerId);
+		}
+	}
+	
+	@Override
+	public void exitGame(Integer loginuserId, Integer shareBoardId) {
+		shareParticipantRepository.deleteByShareBoardIdAndUserId(shareBoardId, loginuserId);
 	}
 
 }

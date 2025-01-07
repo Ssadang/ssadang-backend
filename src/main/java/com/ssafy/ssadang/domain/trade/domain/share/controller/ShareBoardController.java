@@ -92,5 +92,20 @@ public class ShareBoardController {
 		shareBoardService.deleteFavorite(loginUserId, id);
 		return ResponseEntity.ok(null);
 	}
+	
+	@PostMapping("/{id}/participation")
+	public ResponseEntity<?> participateGame(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id) {
+		Integer loginUserId = 1;
+		return ResponseEntity.ok(null);
+	}
+	
+	@DeleteMapping("/{id}/participation")
+	public ResponseEntity<?> exitGame(@AuthenticationPrincipal Object loginUser,
+			@PathVariable Integer id) {
+		Integer loginUserId = 1;
+		return ResponseEntity.ok(null);
+		
+	}
 
 }

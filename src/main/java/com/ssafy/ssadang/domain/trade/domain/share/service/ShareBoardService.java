@@ -26,5 +26,9 @@ public interface ShareBoardService {
 	void addFavorite(Integer loginUserId, Integer shareBoardId);
 	
 	void deleteFavorite(Integer loginUserId, Integer shareBoardId);
+	
+	void participateGame(Integer loginuserId, Integer shareBoardId);
+	
+	void exitGame(Integer loginuserId, Integer shareBoardId);
 
 }

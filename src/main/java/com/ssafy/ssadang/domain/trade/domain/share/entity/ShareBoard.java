@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "share_board")
@@ -47,6 +48,10 @@ public class ShareBoard {
 	
 	public void setHitCount(Integer hitCount) {
 		this.hitCount = hitCount;
+	}
+	
+	public void updateWinnerid(Integer winnerId) {
+		this.winnerId = winnerId;
 	}
 
 }
