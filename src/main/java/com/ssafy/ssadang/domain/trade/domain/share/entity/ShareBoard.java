@@ -46,8 +46,8 @@ public class ShareBoard {
 	@NotNull
 	private Boolean gameSelected;
 	
-	public void setHitCount(Integer hitCount) {
-		this.hitCount = hitCount;
+	public void increaseHitCount() {
+		hitCount++;
 	}
 	
 	public void updateWinnerid(Integer winnerId) {

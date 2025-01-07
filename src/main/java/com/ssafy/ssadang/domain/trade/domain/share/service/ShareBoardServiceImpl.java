@@ -89,7 +89,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	@Override
 	public ShareBoardDetailResponseDto view(Integer loginUserId, Integer shareBoardid) {
 		ShareBoard shareBoard = shareBoardRepository.findById(shareBoardid).orElseThrow();
-		shareBoard.setHitCount(shareBoard.getHitCount() + 1);
+		shareBoard.increaseHitCount();
 		return toShareBoardDetailDto(shareBoard, userService.findDtoById(loginUserId));
 	}
 	
