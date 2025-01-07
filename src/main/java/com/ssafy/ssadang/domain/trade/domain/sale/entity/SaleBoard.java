@@ -43,8 +43,8 @@ public class SaleBoard {
 	@NotNull
 	private Integer hitCount;
 	
-	public void setHitCount(Integer hitCount) {
-		this.hitCount = hitCount;
+	public void increaseHitCount() {
+		hitCount++;
 	}
 
 }
