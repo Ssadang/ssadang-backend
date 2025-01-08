@@ -28,41 +28,49 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UserController {
 	@Autowired
 	UserService service;
-	
+
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@ModelAttribute SignupRequestDto signupRequestDto) {
 		return ResponseEntity.ok(service.signup(signupRequestDto));
 	}
-	
+
 	@PostMapping("/sendmail")
-	public ResponseEntity<?> sendmail(@RequestBody EmailSendRequestDto dto){
+	public ResponseEntity<?> sendmail(@RequestBody EmailSendRequestDto dto) {
 		return ResponseEntity.ok(service.sendmail(dto));
 	}
-	
+
 	@PostMapping("/mailcheck")
-	public ResponseEntity<?> mailcheck(@RequestBody EmailAuthNumberRequestDto dto){
+	public ResponseEntity<?> mailcheck(@RequestBody EmailAuthNumberRequestDto dto) {
 		return ResponseEntity.ok(service.mailcheck(dto));
 	}
-	
+
 	@PostMapping("/login")
-	public ApiResponseJson login(@RequestBody LoginRequestDto dto, HttpServletResponse response){
-		
+	public ApiResponseJson login(@RequestBody LoginRequestDto dto, HttpServletResponse response) {
+
 		TokenResponseDto tokenResponseDto = service.login(dto.getEmail(), dto.getPassword());
-		
-		//refresh 토큰은 쿠키에 저장
+
+		// refresh 토큰은 쿠키에 저장
 		Cookie cookie = new Cookie("refresh", tokenResponseDto.getRefreshTokenInfoResponse());
 		// cookie 설정
 		cookie.setMaxAge(604800);
 		cookie.setHttpOnly(true);
 		response.addCookie(cookie);
-		
+
 		return new ApiResponseJson(HttpStatus.OK, tokenResponseDto.getAccessTokenInfoResponse());
 	}
-	
+
 	@PostMapping("/reissue")
-	public ApiResponseJson reissue(@CookieValue(value="refresh") String refresh) {
-		AccessTokenInfoResponseDto accessTokenInfoResponseDto = service.reissue(refresh);
-		return new ApiResponseJson(HttpStatus.OK, accessTokenInfoResponseDto);
+	public ApiResponseJson reissue(@CookieValue(value = "refresh") String refresh, HttpServletResponse response) {
+		TokenResponseDto tokenResponseDto = service.reissue(refresh);
+
+		// refresh 토큰은 쿠키에 저장
+		Cookie cookie = new Cookie("refresh", tokenResponseDto.getRefreshTokenInfoResponse());
+		// cookie 설정
+		cookie.setMaxAge((int)tokenResponseDto.getRefreshExpireTime());
+		cookie.setHttpOnly(true);
+		response.addCookie(cookie);
+		
+		return new ApiResponseJson(HttpStatus.OK, tokenResponseDto.getAccessTokenInfoResponse());
 	}
 
 	@GetMapping("/test")

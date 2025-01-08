@@ -42,17 +42,15 @@ public class TokenProvider {
 	
 	private final Key hashKey; // 서명 알고리즘에 쓰이는 key 값
 	private final long accessTokenValidationInMilliseconds; // token 유효기간d
-	private final long refreshTokenValidationInMilliseconds;
 	
 	public TokenProvider(String secrete, long accessTokenValidationInMilliseconds, long refreshTokenValidationInMilliseconds) {
 		byte[] keyBytes = Decoders.BASE64.decode(secrete); // base64로 인코딩된 secrete key를 decoder로 decoding 하고 keyBytes에 저장후
 		this.hashKey = Keys.hmacShaKeyFor(keyBytes);// 이걸 이용하려면 Key 객체로 wrapping 해야한다.
 		this.accessTokenValidationInMilliseconds = accessTokenValidationInMilliseconds * 1000;
-		this.refreshTokenValidationInMilliseconds = refreshTokenValidationInMilliseconds * 1000;
 	}
 	// 토큰 발급 로직
 	// RefreshToken
-	public String createRefreshToken(User user) {
+	public String createRefreshToken(User user, long refreshTokenValidationInMilliseconds) {
 		long currentTime = new Date().getTime(); // 현재 시간
 		Date refreshTokenExpireTime = new Date(currentTime + refreshTokenValidationInMilliseconds);
 		String tokenId = UUID.randomUUID().toString();

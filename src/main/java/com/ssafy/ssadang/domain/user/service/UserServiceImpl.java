@@ -1,6 +1,7 @@
 package com.ssafy.ssadang.domain.user.service;
 
 import java.security.Key;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -165,7 +166,7 @@ public class UserServiceImpl implements UserService {
 			
 			TokenResponseDto tokenResponseDto = new TokenResponseDto();
 			tokenResponseDto.setAccessTokenInfoResponse(accessTokenInfoResponseDto);
-			tokenResponseDto.setRefreshTokenInfoResponse(tokenProvider.createRefreshToken(detailUser));
+			tokenResponseDto.setRefreshTokenInfoResponse(tokenProvider.createRefreshToken(detailUser, 604800 * 1000));
 			
 			// refresh 토큰을 redis에 저장
 			redisUtils.setData(tokenResponseDto.getRefreshTokenInfoResponse(), email, (long)604800 * 1000);
@@ -180,7 +181,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public AccessTokenInfoResponseDto reissue(String refreshToken) {
+	public TokenResponseDto reissue(String refreshToken) {
 		// redis에 refresh 토큰이 존재 하지 않는다면 그냥 검증할 수 없음
 		// 위조, 만료, 전부다 막힘
 		if(redisUtils.getData(refreshToken) == null) {
@@ -194,10 +195,29 @@ public class UserServiceImpl implements UserService {
 			User user = findByEmail(email);
 			User detailUser = findUserWithRoleNameById(user.getUserId());
 			
+			// refresh rotate
 			// 토큰 재발급
+			
+			// access token 재발급
 			AccessTokenInfoResponseDto accessTokenInfoResponseDto = tokenProvider.createAccessToken(detailUser);
-			return accessTokenInfoResponseDto;
+			
+			// refreshToken의 남은 시간(초)를 계산
+			Date expirationDate = claims.getExpiration();
+			long currentTimeMillis = System.currentTimeMillis();
+			long remainingTimeMillis = expirationDate.getTime() - currentTimeMillis;
+			long remainingSeconds = remainingTimeMillis / 1000;
+			
+			// refresh token 발급
+			TokenResponseDto tokenResponseDto = new TokenResponseDto();
+			tokenResponseDto.setRefreshExpireTime(remainingSeconds);
+			tokenResponseDto.setAccessTokenInfoResponse(accessTokenInfoResponseDto);
+			tokenResponseDto.setRefreshTokenInfoResponse(tokenProvider.createRefreshToken(detailUser, remainingSeconds * 1000));
+			
+			
+			// 기존의 refresh token을 삭제
+			redisUtils.deleteData(refreshToken);
+			redisUtils.setData(tokenResponseDto.getRefreshTokenInfoResponse(), email, remainingSeconds * 1000);
+			return tokenResponseDto;
 		}
 	}
-
 }

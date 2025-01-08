@@ -13,7 +13,7 @@ public interface UserService {
 	public int mailcheck(EmailAuthNumberRequestDto dto);
 	public User findUserWithRoleNameById(int userId);
 	public TokenResponseDto login(String email, String password);
-	public AccessTokenInfoResponseDto reissue(String refreshToken);
+	public TokenResponseDto reissue(String refreshToken);
 	User findById(Integer id);
 	User findByEmail(String email);
 }
