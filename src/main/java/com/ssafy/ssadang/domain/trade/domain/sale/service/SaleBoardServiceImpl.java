@@ -87,7 +87,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	@Override
 	public SaleBoardDetailResponseDto view(Integer loginUserId, Integer saleBoardid) {
 		SaleBoard saleBoard = saleBoardRepository.findById(saleBoardid).orElseThrow();
-		saleBoard.setHitCount(saleBoard.getHitCount() + 1);
+		saleBoard.increaseHitCount();
 		return toSaleBoardDetailDto(saleBoard, userService.findDtoById(loginUserId));
 	}
 	
