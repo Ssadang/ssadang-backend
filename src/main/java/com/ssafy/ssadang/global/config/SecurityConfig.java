@@ -4,14 +4,30 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ssafy.ssadang.global.security.JwtAccessDeniedHandler;
+import com.ssafy.ssadang.global.security.JwtAuthenticationEntryPoint;
+import com.ssafy.ssadang.global.security.filter.JwtFilter;
+
+import lombok.RequiredArgsConstructor;
 
 // 인가 및 설정을 담당
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor // final이 붙여져있는 객체에 자동으로 autowired를 해줌 
 public class SecurityConfig {
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtFilter jwtFilter;
+    private final String[] adminUrl = {"/admin/**"};
+    private final String[] permitAllUrl = {"/error", "/user/login", "/user/signup", "/user/reissue"};
+    private final String[] temporaryUrl = {"/user/test"};
+
 	// 비밀번호 암호화 메서드
 	// 단방향 암호화
 	@Bean
@@ -22,21 +38,23 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-		// csrf disable
-		http.csrf((auth) -> auth.disable());
-		// form 로그인 방식 disable
-		http.formLogin((auth) -> auth.disable());
-		// http basic 인증 방식 disable
-		http.httpBasic((auth) -> auth.disable());
-		// 인가 정책
-		http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/**").permitAll() // 로그인 안해도 인가를 얻을 수 있음
-                .anyRequest().authenticated());// 로그인 해야 인가를 얻을 수 있음
-		// 세션을 서버에서 관리 하지않겠다라는걸 명시
-        http
-        .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-                
-		return http.build();
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(handle -> handle
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(adminUrl).hasAnyRole("ADMIN")
+                        .requestMatchers(permitAllUrl).permitAll()
+                        .requestMatchers(temporaryUrl).hasAnyRole("TEMPORARY")
+                        .anyRequest().authenticated()
+                )
+                .build();
 	}
 }
