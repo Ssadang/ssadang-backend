@@ -1,4 +1,4 @@
-package com.ssafy.ssadang.domain.trade.domain.sale.entity;
+package com.ssafy.ssadang.domain.trade.domain.share.entity;
 
 import java.time.LocalDateTime;
 
@@ -12,18 +12,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "sale_board")
+@Table(name = "share_board")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class SaleBoard {
+public class ShareBoard {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer saleBoardId;
+	private Integer shareBoardId;
 	@NotNull
 	private Integer authorId;
 	@NotNull
@@ -33,18 +34,24 @@ public class SaleBoard {
 	private String title;
 	@NotNull
 	private String description;
-	@NotNull
-	private Integer price;
+	private Integer maxParticipantCount;
 	@NotNull
 	private Integer itemCategoryId;
 	@NotNull
 	private Integer areaId;
+	private Integer winnerId;
 	private Integer gifticonId;
 	@NotNull
 	private Integer hitCount;
+	@NotNull
+	private Boolean gameSelected;
 	
 	public void increaseHitCount() {
 		hitCount++;
+	}
+	
+	public void updateWinnerid(Integer winnerId) {
+		this.winnerId = winnerId;
 	}
 
 }
