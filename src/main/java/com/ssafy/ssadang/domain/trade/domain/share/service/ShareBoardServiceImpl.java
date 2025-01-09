@@ -64,6 +64,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 				.areaId(shareBoardRequestDto.getAreaId())
 				.gifticonId(shareBoardRequestDto.getGifticonId())
 				.hitCount(0)
+				.gameSelected(shareBoardRequestDto.getGameSelected())
 				.build();
 		ShareBoard savedShareBoard = shareBoardRepository.save(shareBoard);
 		saveImages(savedShareBoard.getShareBoardId(), shareBoardRequestDto.getImages());
