@@ -196,7 +196,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	private void addStatus(ShareBoard shareBoard, Integer boardStatusId) {
 		boolean statusPresent = hasStatus(shareBoard, boardStatusId);
 		if (statusPresent) {
-			throw new IllegalArgumentException("Gifticon already has the status: " + boardStatusId);
+			throw new IllegalArgumentException("Gifticon already has status: " + boardStatusId);
 		}
 		ShareBoardStatusRelationship shareBoardStatusRelationship = ShareBoardStatusRelationship.builder()
 				.shareBoardId(shareBoard.getGifticonId())
