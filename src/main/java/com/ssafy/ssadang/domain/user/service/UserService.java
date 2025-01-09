@@ -4,10 +4,7 @@ import com.ssafy.ssadang.domain.user.dto.UserDto;
 import com.ssafy.ssadang.domain.user.dto.request.EmailAuthNumberRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.EmailSendRequestDto;
 import com.ssafy.ssadang.domain.user.dto.request.SignupRequestDto;
-<<<<<<< HEAD
-=======
 import com.ssafy.ssadang.domain.user.entity.User;
-import com.ssafy.ssadang.global.security.dto.response.AccessTokenInfoResponseDto;
 import com.ssafy.ssadang.global.security.dto.response.TokenResponseDto;
 
 public interface UserService {
