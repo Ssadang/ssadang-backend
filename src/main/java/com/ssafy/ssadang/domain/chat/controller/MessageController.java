@@ -74,7 +74,8 @@ public class MessageController {
 
     //유저별 채팅방리스트 조회
     @GetMapping("/api/v1/chat/rooms")
-    public ResponseEntity<List<LastMessage>> getChatRoomsByUserId(@RequestParam Integer userId) {
+    public ResponseEntity<List<LastMessage>> getChatRoomsByUserId(@RequestHeader("Authorization") String token) {
+        Integer userId = 1; // 토큰에서 userId 추출
         List<LastMessage> chatRooms = lastMessageService.findChatRoomsByUserId(userId);
 
         return ResponseEntity.ok(chatRooms.isEmpty() ? new ArrayList<>() : chatRooms);
