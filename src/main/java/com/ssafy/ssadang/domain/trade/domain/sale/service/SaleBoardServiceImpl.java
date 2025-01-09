@@ -185,7 +185,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	}
 	
 	private boolean hasStatus(SaleBoard saleBoard, Integer boardStatusId) {
-		return saleBoardStatusRelationshipRepository.findAllBySaleBoardId(saleBoard.getGifticonId()).stream()
+		return saleBoardStatusRelationshipRepository.findAllBySaleBoardId(saleBoard.getSaleBoardId()).stream()
 				.anyMatch(gifticonStatusRelationship -> gifticonStatusRelationship.getBoardStatusId()
 						.equals(boardStatusId));
 	}
