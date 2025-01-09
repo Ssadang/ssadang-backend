@@ -14,8 +14,8 @@ public class SignupRequestDto {
 	private String name;
 	private String nickname;
 	private int areaId;
-	private MultipartFile profileImg;
-	private MultipartFile proveImg;
+	private String profileImgUrl;
+	private String proveImgUrl;
 	private int grade;
 	
 	public User toUserEntity() {
@@ -24,6 +24,8 @@ public class SignupRequestDto {
 				.email(email)
 				.name(name)
 				.nickname(nickname)
+				.profileImgUrl(profileImgUrl)
+				.proveImgUrl(proveImgUrl)
 				.areaId(areaId)
 				.grade(grade)
 				.build();

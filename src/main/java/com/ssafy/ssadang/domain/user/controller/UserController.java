@@ -30,7 +30,7 @@ public class UserController {
 	UserService service;
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@ModelAttribute SignupRequestDto signupRequestDto) {
+	public ResponseEntity<?> signup(@RequestBody SignupRequestDto signupRequestDto) {
 		return ResponseEntity.ok(service.signup(signupRequestDto));
 	}
 
