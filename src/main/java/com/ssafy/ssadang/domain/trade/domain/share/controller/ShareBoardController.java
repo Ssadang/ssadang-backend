@@ -3,6 +3,7 @@ package com.ssafy.ssadang.domain.trade.domain.share.controller;
 import java.net.URI;
 import java.util.Map;
 
+import com.ssafy.ssadang.global.security.UserPrinciple;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,11 +36,9 @@ public class ShareBoardController {
 	private final ShareBoardService shareBoardService;
 
 	@PostMapping
-	public ResponseEntity<?> upload(@AuthenticationPrincipal Object author,
+	public ResponseEntity<?> upload(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@Valid @ModelAttribute ShareBoardRequestDto shareBoardRequestDto) {
-		// 로그인 구현 전까지 임시로 authorId 1 사용
-		Integer authorId = 1;
-		ShareBoardDetailResponseDto shareBoardResponseDto = shareBoardService.upload(authorId, shareBoardRequestDto);
+		ShareBoardDetailResponseDto shareBoardResponseDto = shareBoardService.upload(userPrinciple.getUserId(), shareBoardRequestDto);
 		return ResponseEntity
 				.created(URI.create(
 						contextPath + "/api/v1/share-board/" + shareBoardResponseDto.getShareBoard().getShareBoardId()))
@@ -47,63 +46,57 @@ public class ShareBoardController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> view(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> view(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		return ResponseEntity.ok(shareBoardService.view(loginUserId, id));
+		return ResponseEntity.ok(shareBoardService.view(userPrinciple.getUserId(), id));
 	}
 	
 	@GetMapping
-	public ResponseEntity<?> list(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> list(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) Integer cursorId) {
-		Integer loginUserId = 1;
-		return ResponseEntity.ok(shareBoardService.list(loginUserId, keyword, cursorId));
+		return ResponseEntity.ok(shareBoardService.list(userPrinciple.getUserId(), keyword, cursorId));
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteById(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> deleteById(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		shareBoardService.deleteById(loginUserId, id);
+		shareBoardService.deleteById(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> setStatusById(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> setStatusById(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
-		Integer loginUserId = 1;
-		shareBoardService.setStatusById(loginUserId, id, status);
+		shareBoardService.setStatusById(userPrinciple.getUserId(), id, status);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PostMapping("/{id}/favorite")
-	public ResponseEntity<?> addFavorite(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> addFavorite(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		shareBoardService.addFavorite(loginUserId, id);
+		shareBoardService.addFavorite(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@DeleteMapping("/{id}/favorite")
-	public ResponseEntity<?> deleteFavorite(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> deleteFavorite(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		shareBoardService.deleteFavorite(loginUserId, id);
+		shareBoardService.deleteFavorite(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PostMapping("/{id}/participation")
-	public ResponseEntity<?> participateGame(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> participateGame(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
+		shareBoardService.participateGame(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@DeleteMapping("/{id}/participation")
-	public ResponseEntity<?> exitGame(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> exitGame(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
+		shareBoardService.exitGame(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 		
 	}
