@@ -3,6 +3,9 @@ package com.ssafy.ssadang.domain.gifticon.controller;
 import java.net.URI;
 import java.util.Map;
 
+import com.ssafy.ssadang.domain.user.entity.User;
+import com.ssafy.ssadang.global.security.UserPrinciple;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +27,7 @@ import com.ssafy.ssadang.domain.gifticon.service.GifticonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/gifticon")
 @RequiredArgsConstructor
@@ -36,53 +40,47 @@ public class GifticonController {
 	
 	@PostMapping
 	public ResponseEntity<?> save(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@Valid @ModelAttribute GifticonRequestDto gifticonRequestDto) {
-		Integer ownerId = 1;
-		GifticonResponseDto gifticonResponseDto = gifticonService.save(ownerId, gifticonRequestDto);
+		GifticonResponseDto gifticonResponseDto = gifticonService.save(userPrinciple.getUserId(), gifticonRequestDto);
 		return ResponseEntity.created(URI.create(contextPath + "/api/v1/gifticon/" + gifticonResponseDto.getGifticonId()))
 				.body(gifticonResponseDto);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer ownerId = 1;
-		return ResponseEntity.ok(gifticonService.findById(ownerId, id));
+		return ResponseEntity.ok(gifticonService.findById(userPrinciple.getUserId(), id));
 	}
 	
 	@GetMapping("/expired")
 	public ResponseEntity<?> findAllExpired(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@RequestParam(required = false) Integer cursorId) {
-		Integer ownerId = 1;
-		return ResponseEntity.ok(gifticonService.findExpiredPage(ownerId, cursorId));
+		return ResponseEntity.ok(gifticonService.findExpiredPage(userPrinciple.getUserId(), cursorId));
 	}
 	
 	@GetMapping("/unexpired")
 	public ResponseEntity<?> findAllUnexpired(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@RequestParam(required = false) Integer cursorId) {
-		Integer ownerId = 1;
-		return ResponseEntity.ok(gifticonService.findUnexpiredPage(ownerId, cursorId));
+		return ResponseEntity.ok(gifticonService.findUnexpiredPage(userPrinciple.getUserId(), cursorId));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteById(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer ownerId = 1;
-		gifticonService.deleteById(ownerId, id);
+		gifticonService.deleteById(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> setStatusById(
-			@AuthenticationPrincipal Object owner,
+			@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
-		Integer ownerId = 1;
-		gifticonService.setStatusById(ownerId, id, status);
+		gifticonService.setStatusById(userPrinciple.getUserId(), id, status);
 		return ResponseEntity.ok(null);
 	}
 
