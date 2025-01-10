@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class UserController {
 	UserService service;
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@ModelAttribute SignupRequestDto signupRequestDto) {
+	public ResponseEntity<?> signup(@RequestBody SignupRequestDto signupRequestDto) {
 		return ResponseEntity.ok(service.signup(signupRequestDto));
 	}
 
@@ -72,7 +73,13 @@ public class UserController {
 		
 		return new ApiResponseJson(HttpStatus.OK, tokenResponseDto.getAccessTokenInfoResponse());
 	}
-
+	
+	@GetMapping("/{userId}")
+	public ResponseEntity<?> finduser(@PathVariable("userId") int userId) {
+		return ResponseEntity.ok(service.findById(userId));
+	}
+	
+	
 	@GetMapping("/test")
 	public String test() {
 		return "hello";

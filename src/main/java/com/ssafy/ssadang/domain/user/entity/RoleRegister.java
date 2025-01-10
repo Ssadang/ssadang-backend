@@ -1,5 +1,7 @@
 package com.ssafy.ssadang.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,7 @@ public class RoleRegister {
 	
 	@ManyToOne
 	@JoinColumn(name="user_id", referencedColumnName="user_id")
+	@JsonBackReference
 	private User user;
 	
 	@ManyToOne

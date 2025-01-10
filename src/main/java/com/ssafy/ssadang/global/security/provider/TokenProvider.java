@@ -91,6 +91,7 @@ public class TokenProvider {
 				.claim(AUTHORITIES_KEY, role)
 				.claim(USERNAME_KEY, user.getName())
 				.claim(TOKEN_ID_KEY, tokenId)
+				.claim(USERID_KEY, user.getUserId())
 				.signWith(hashKey, SignatureAlgorithm.HS512) // 여기서 header가 결정돼기 떄문에 header를 설정안해줘도 됨
 				.setExpiration(accessTokenExpireTime)
 				.compact();
@@ -140,7 +141,7 @@ public class TokenProvider {
 		.map(SimpleGrantedAuthority::new)
 		.collect(Collectors.toList());
 		
-		UserPrinciple principle = new UserPrinciple(claims.getSubject(), claims.get(USERNAME_KEY, String.class), authorities);
+		UserPrinciple principle = new UserPrinciple(claims.getSubject(), claims.get(USERNAME_KEY, String.class),claims.get(USERID_KEY, Integer.class) ,authorities);
 		
 		return new UsernamePasswordAuthenticationToken(principle, token, authorities);
 	}

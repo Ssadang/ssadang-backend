@@ -70,17 +70,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int signup(SignupRequestDto dto) {
+		// 중복 아이디 검사
+		if(userRepo.existsByEmail(dto.getEmail())) return 0;
+		
 		// TODO Auto-generated method stub
 		User user = dto.toUserEntity();
+		
 		// password
 		user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-		// image upload
-		if (dto.getProfileImg() != null)
-			user.setProfileImgUrl(uploader.uploadImage(dto.getProfileImg()));
-		if (dto.getProveImg() != null)
-			user.setProveImgUrl(uploader.uploadImage(dto.getProveImg()));
-
+		
 		User saveUser = userRepo.save(user);
 
 		Role role = roleRepo.findByRoleId(1); // 1 번 임시사용자.
