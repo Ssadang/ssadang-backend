@@ -64,6 +64,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 				.areaId(shareBoardRequestDto.getAreaId())
 				.gifticonId(shareBoardRequestDto.getGifticonId())
 				.hitCount(0)
+				.gameSelected(shareBoardRequestDto.getGameSelected())
 				.build();
 		ShareBoard savedShareBoard = shareBoardRepository.save(shareBoard);
 		saveImages(savedShareBoard.getShareBoardId(), shareBoardRequestDto.getImages());
@@ -187,15 +188,15 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	}
 	
 	private boolean hasStatus(ShareBoard shareBoard, Integer boardStatusId) {
-		return shareBoardStatusRelationshipRepository.findAllByShareBoardId(shareBoard.getGifticonId()).stream()
-				.anyMatch(gifticonStatusRelationship -> gifticonStatusRelationship.getBoardStatusId()
+		return shareBoardStatusRelationshipRepository.findAllByShareBoardId(shareBoard.getShareBoardId()).stream()
+				.anyMatch(shareBoardStatusRelationship -> shareBoardStatusRelationship.getBoardStatusId()
 						.equals(boardStatusId));
 	}
 	
 	private void addStatus(ShareBoard shareBoard, Integer boardStatusId) {
 		boolean statusPresent = hasStatus(shareBoard, boardStatusId);
 		if (statusPresent) {
-			throw new IllegalArgumentException("Gifticon already has the status: " + boardStatusId);
+			throw new IllegalArgumentException("Gifticon already has status: " + boardStatusId);
 		}
 		ShareBoardStatusRelationship shareBoardStatusRelationship = ShareBoardStatusRelationship.builder()
 				.shareBoardId(shareBoard.getGifticonId())
@@ -219,6 +220,11 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	
 	@Override
 	public void participateGame(Integer loginuserId, Integer shareBoardId) {
+		ShareBoard shareBoard = shareBoardRepository.findById(shareBoardId).orElseThrow();
+		// 게시글이 삭제되었거나 닫힌 경우
+		if (hasStatus(shareBoard, 1) || hasStatus(shareBoard, 2)) {
+			throw new IllegalArgumentException();
+		}
 		shareParticipantRepository.findByShareBoardIdAndUserId(shareBoardId, loginuserId)
 				.ifPresent(shareParticipant -> {
 					throw new IllegalArgumentException();
@@ -230,11 +236,12 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 						.build());
 		Set<ShareParticipant> shareParticipants = shareParticipantRepository.findAllByShareBoardId(shareBoardId);
 		int currentShareParticipantCount = shareParticipants.size();
-		ShareBoard shareBoard = shareBoardRepository.findById(shareBoardId).orElseThrow();
 		if (currentShareParticipantCount == shareBoard.getMaxParticipantCount()) {
 			int winnerIdx = (int) (Math.random() * currentShareParticipantCount);
 			Integer winnerId = shareParticipants.stream().skip(winnerIdx).findFirst().orElseThrow().getUserId();
 			shareBoard.updateWinnerid(winnerId);
+			shareBoardRepository.save(shareBoard);
+			close(shareBoard);
 		}
 	}
 	
