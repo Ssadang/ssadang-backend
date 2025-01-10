@@ -3,6 +3,7 @@ package com.ssafy.ssadang.domain.trade.domain.sale.controller;
 import java.net.URI;
 import java.util.Map;
 
+import com.ssafy.ssadang.global.security.UserPrinciple;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,11 +36,9 @@ public class SaleBoardController {
 	private final SaleBoardService saleBoardService;
 
 	@PostMapping
-	public ResponseEntity<?> upload(@AuthenticationPrincipal Object author,
+	public ResponseEntity<?> upload(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@Valid @ModelAttribute SaleBoardRequestDto saleBoardRequestDto) {
-		// 로그인 구현 전까지 임시로 authorId 1 사용
-		Integer authorId = 1;
-		SaleBoardDetailResponseDto saleBoardResponseDto = saleBoardService.upload(authorId, saleBoardRequestDto);
+		SaleBoardDetailResponseDto saleBoardResponseDto = saleBoardService.upload(userPrinciple.getUserId(), saleBoardRequestDto);
 		return ResponseEntity
 				.created(URI.create(
 						contextPath + "/api/v1/sale-board/" + saleBoardResponseDto.getSaleBoard().getSaleBoardId()))
@@ -47,49 +46,43 @@ public class SaleBoardController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> view(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> view(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		return ResponseEntity.ok(saleBoardService.view(loginUserId, id));
+		return ResponseEntity.ok(saleBoardService.view(userPrinciple.getUserId(), id));
 	}
 	
 	@GetMapping
-	public ResponseEntity<?> list(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> list(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) Integer cursorId) {
-		Integer loginUserId = 1;
-		return ResponseEntity.ok(saleBoardService.list(loginUserId, keyword, cursorId));
+		return ResponseEntity.ok(saleBoardService.list(userPrinciple.getUserId(), keyword, cursorId));
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteById(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> deleteById(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		saleBoardService.deleteById(loginUserId, id);
+		saleBoardService.deleteById(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> setStatusById(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> setStatusById(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id, @RequestBody Map<String, Integer> status) {
-		Integer loginUserId = 1;
-		saleBoardService.setStatusById(loginUserId, id, status);
+		saleBoardService.setStatusById(userPrinciple.getUserId(), id, status);
 		return ResponseEntity.ok(null);
 	}
 	
 	@PostMapping("/{id}/favorite")
-	public ResponseEntity<?> addFavorite(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> addFavorite(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		saleBoardService.addFavorite(loginUserId, id);
+		saleBoardService.addFavorite(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 	
 	@DeleteMapping("/{id}/favorite")
-	public ResponseEntity<?> deleteFavorite(@AuthenticationPrincipal Object loginUser,
+	public ResponseEntity<?> deleteFavorite(@AuthenticationPrincipal UserPrinciple userPrinciple,
 			@PathVariable Integer id) {
-		Integer loginUserId = 1;
-		saleBoardService.deleteFavorite(loginUserId, id);
+		saleBoardService.deleteFavorite(userPrinciple.getUserId(), id);
 		return ResponseEntity.ok(null);
 	}
 
