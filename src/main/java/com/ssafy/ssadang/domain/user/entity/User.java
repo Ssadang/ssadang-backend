@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,5 +54,6 @@ public class User {
 	private int shareCount;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<RoleRegister> roleRegister;
 }
