@@ -27,6 +27,9 @@ import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardSpecificat
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleBoardStatusRelationshipRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleFavoriteRepository;
 import com.ssafy.ssadang.domain.trade.domain.sale.repository.SaleImageRepository;
+import com.ssafy.ssadang.domain.trade.entity.ItemCategory;
+import com.ssafy.ssadang.domain.trade.repository.ItemCategoryRepository;
+import com.ssafy.ssadang.domain.trade.repository.ItemCategorySpecification;
 import com.ssafy.ssadang.domain.user.dto.UserDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
@@ -48,6 +51,7 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 	private final SaleImageRepository saleImageRepository;
 	private final SaleFavoriteRepository saleFavoriteRepository;
 	private final SaleBoardStatusRelationshipRepository saleBoardStatusRelationshipRepository;
+	private final ItemCategoryRepository itemCategoryRepository;
 	
 	@Override
 	public SaleBoardDetailResponseDto upload(Integer authorId, SaleBoardRequestDto saleBoardRequestDto) {
@@ -106,12 +110,13 @@ public class SaleBoardServiceImpl implements SaleBoardService {
 		} else {
 			String[] keywords = keyword.split(" ");
 			Specification<SaleBoard> specification = null;
+			List<ItemCategory> itemCategories = itemCategoryRepository.findAll(ItemCategorySpecification.hasAllKeywordsIn(keywords));
 			if (cursorId == null) {
-				specification = SaleBoardSpecification.hasAllKeywordsIn(keywords);
+				specification = SaleBoardSpecification.hasAllKeywordsIn(keywords, itemCategories);
 			} else {
 				SaleBoard cursor = saleBoardRepository.findById(cursorId).orElseThrow();
 				specification = SaleBoardSpecification
-						.isCreateDateLessThanAndHasAllKeywordsIn(cursor.getCreateDate(), keywords);
+						.isCreateDateLessThanAndHasAllKeywordsIn(cursor.getCreateDate(), keywords, itemCategories);
 			}
 			page = saleBoardRepository.findAll(specification, pageable);
 		}
