@@ -29,6 +29,9 @@ import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareBoardStatusRe
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareFavoriteRepository;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareImageRepository;
 import com.ssafy.ssadang.domain.trade.domain.share.repository.ShareParticipantRepository;
+import com.ssafy.ssadang.domain.trade.entity.ItemCategory;
+import com.ssafy.ssadang.domain.trade.repository.ItemCategoryRepository;
+import com.ssafy.ssadang.domain.trade.repository.ItemCategorySpecification;
 import com.ssafy.ssadang.domain.user.dto.UserDto;
 import com.ssafy.ssadang.domain.user.service.UserService;
 import com.ssafy.ssadang.infra.aws.AmazonS3Uploader;
@@ -51,6 +54,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 	private final ShareFavoriteRepository shareFavoriteRepository;
 	private final ShareBoardStatusRelationshipRepository shareBoardStatusRelationshipRepository;
 	private final ShareParticipantRepository shareParticipantRepository;
+	private final ItemCategoryRepository itemCategoryRepository;
 	
 	@Override
 	public ShareBoardDetailResponseDto upload(Integer authorId, ShareBoardRequestDto shareBoardRequestDto) {
@@ -109,12 +113,13 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 		} else {
 			String[] keywords = keyword.split(" ");
 			Specification<ShareBoard> specification = null;
+			List<ItemCategory> itemCategories = itemCategoryRepository.findAll(ItemCategorySpecification.hasAllKeywordsIn(keywords));
 			if (cursorId == null) {
-				specification = ShareBoardSpecification.hasAllKeywordsIn(keywords);
+				specification = ShareBoardSpecification.hasAllKeywordsIn(keywords, itemCategories);
 			} else {
 				ShareBoard cursor = shareBoardRepository.findById(cursorId).orElseThrow();
 				specification = ShareBoardSpecification
-						.isCreateDateLessThanAndHasAllKeywordsIn(cursor.getCreateDate(), keywords);
+						.isCreateDateLessThanAndHasAllKeywordsIn(cursor.getCreateDate(), keywords, itemCategories);
 			}
 			page = shareBoardRepository.findAll(specification, pageable);
 		}
